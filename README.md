@@ -9,8 +9,8 @@ Team Members:
     Name: Osama Jameel Wasfat Ahmed 
     ID: 764000269
 
-    Name:
-    ID:
+    Name: Abdullah Kair
+    ID: 377003755
 
-    Name:
-    ID:
+    Name: Jason Nicodemus Devarajan Venkataraghavan
+    ID: 757001356
