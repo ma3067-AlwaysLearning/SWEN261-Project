@@ -6,5 +6,5 @@ Team Members:
     Name: Mohammed Adil
     ID: 415006855
 
-    Name: Osama Ahmed
+    Name: Osama Jameel Wasfat Ahmed 
     ID: 764000269
