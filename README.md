@@ -14,3 +14,14 @@ Team Members:
 
     Name: Jason Nicodemus Devarajan Venkataraghavan
     ID: 757001356
+
+
+## **Product Vision**
+(WIP)
+FOR (target customer)
+WHO (statement of need or opportunity)
+THE (product name) IS A (product category)
+THAT (key benefit, compelling reason to buy)
+UNLIKE (primary competitive alternative)
+OUR PRODUCT (statement of primary differentiation)
+(WIP)
