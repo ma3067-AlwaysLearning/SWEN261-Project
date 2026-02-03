@@ -16,6 +16,9 @@ This consists of a group project collaborated on by 4 people for our SWEN261 Pro
     Name: Jason Nicodemus Devarajan Venkataraghavan
     ID: 757001356
 
+    Name: Ahmed Almarri
+    ID: 769002024
+
 
 ## **Product Vision**
 (WIP)
