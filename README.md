@@ -21,11 +21,4 @@ This consists of a group project collaborated on by 4 people for our SWEN261 Pro
 
 
 ## **Product Vision**
-(WIP)
-FOR (target customer)
-WHO (statement of need or opportunity)
-THE (product name) IS A (product category)
-THAT (key benefit, compelling reason to buy)
-UNLIKE (primary competitive alternative)
-OUR PRODUCT (statement of primary differentiation)
-(WIP)
+**FOR** university students, **WHO** wants to discover and attend campus events **THE** EventNest **IS A** campus event registration platform **THAT** allows users to browse events and build a personal attendance list **UNLIKE** social media announcements or email flyers **OUR PRODUCT** ensures structured event management with secure user-specific registrations.
