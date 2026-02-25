@@ -5,8 +5,9 @@ This consists of a group project collaborated on by 5 people for our SWEN261 Pro
 ## Team Members
 - Mohammed Adil (ID: 415006855)
 - Osama Jameel Wasfat Ahmed (ID: 764000269)
-- Abdullah Kair (ID: 764000269)
+- Abdullah Kair (ID: 377003755)
 - Ahmed Almarri (ID: 769002024)
+- Jason Venkataraghavan (ID: 757001356)
 ## Assignment 1 Progress
 ### Completed:
 - [x] Domain Analysis & Class Diagram
