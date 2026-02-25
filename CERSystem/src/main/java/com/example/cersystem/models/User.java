@@ -2,8 +2,9 @@ package com.example.cersystem.models;
 
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
-
+@Component
 @Entity
 @Table(name = "users")
 public class User {
@@ -50,6 +51,30 @@ public class User {
 
     public String getUniversity_id() {
         return university_id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public void setUniversity_id(String university_id) {
+        this.university_id = university_id;
     }
 }
 
