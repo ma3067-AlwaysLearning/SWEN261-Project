@@ -1,0 +1,101 @@
+<div class="login-page">
+  <div class="bg-blob bg-blob-left"></div>
+  <div class="bg-blob bg-blob-right"></div>
+
+  <div class="login-shell">
+    <!-- Left panel -->
+    <section class="login-brand-panel">
+      <div class="pill">🔒 Secure Access</div>
+
+      <h1>CER System Portal</h1>
+
+      <p class="brand-description">
+        Sign in to access your dashboard, review account details, and securely
+        manage your system features.
+      </p>
+
+      <ul class="feature-list">
+        <li>Role-based access control</li>
+        <li>Secure authentication with Spring Security</li>
+        <li>Fast and responsive dashboard</li>
+      </ul>
+    </section>
+
+    <!-- Right panel -->
+    <section class="login-form-panel">
+      <div class="form-wrap">
+        <h2>Welcome back</h2>
+        <p class="subtitle">Sign in with your account to continue.</p>
+
+        <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm" novalidate>
+          <!-- Email -->
+          <div class="field">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              email
+              [(ngModel)]="email"
+              #emailModel="ngModel"
+              required
+              autocomplete="username"
+              placeholder="example@rit.edu"
+              [disabled]="isSubmitting"
+              [class.input-error]="emailModel.invalid && (emailModel.touched || loginForm.submitted)"
+              (ngModelChange)="clearApiError()"
+            />
+
+            <small
+              class="error-text"
+              *ngIf="emailModel.errors?.['required'] && (emailModel.touched || loginForm.submitted)"
+            >
+              Email is required.
+            </small>
+
+            <small
+              class="error-text"
+              *ngIf="emailModel.errors?.['email'] && !emailModel.errors?.['required'] && (emailModel.touched || loginForm.submitted)"
+            >
+              Please enter a valid email format (e.g., example@rit.edu).
+            </small>
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              [(ngModel)]="password"
+              #passwordModel="ngModel"
+              required
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              [disabled]="isSubmitting"
+              [class.input-error]="passwordModel.invalid && (passwordModel.touched || loginForm.submitted)"
+              (ngModelChange)="clearApiError()"
+            />
+
+            <small
+              class="error-text"
+              *ngIf="passwordModel.errors?.['required'] && (passwordModel.touched || loginForm.submitted)"
+            >
+              Password is required.
+            </small>
+          </div>
+
+          <!-- Backend/API error -->
+          <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+          <button class="login-btn" type="submit" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Logging in...' : 'Log In' }}
+          </button>
+        </form>
+
+        <p class="footer-note">CER System • Angular + Spring Boot + MariaDB</p>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="dashboard-wrap">
+  <div class="dashboard-card">
+    <h2>Welcome to Your Dashboard</h2>
+
+    <p *ngIf="loading">Loading user data...</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="info-box" *ngIf="!loading && user">
+      <p><strong>Name:</strong> {{ user.name }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>University ID:</strong> {{ user.university_id }}</p>
+      <p><strong>Role:</strong> {{ user.role }}</p>
+    </div>
+
+    <button class="logout-btn" type="button" (click)="onLogout()">
+      Logout
+    </button>
+  </div>
+</div>
