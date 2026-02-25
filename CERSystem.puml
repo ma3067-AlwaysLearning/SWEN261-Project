@@ -1,0 +1,129 @@
+@startuml CERSystem
+
+skinparam linetype ortho
+skinparam nodesep 200
+skinparam ranksep 150
+
+package "models" {
+    entity User {
+        - id : Long
+        - name : String
+        - email : String
+        - password : String
+        - role : String
+        - university_id : String
+        + getId() : Long
+        + getName() : String
+        + getEmail() : String
+        + getPassword() : String
+        + getRole() : String
+        + getUniversity_id() : String
+        + setId(id : Long) : void
+        + setName(name : String) : void
+        + setEmail(email : String) : void
+        + setPassword(password : String) : void
+        + setRole(role : String) : void
+        + setUniversity_id(university_id : String) : void
+    }
+}
+
+
+package "repositories" {
+    interface UserRepository {
+        + findByEmail(email : String) : Optional<User>
+    }
+}
+
+
+package "services" {
+    class UserDetailsServ {
+        - userRepository : UserRepository
+        + UserDetailsServ(userRepository : UserRepository)
+        + loadUserByUsername(email : String) : UserDetails
+    }
+}
+
+
+package "controllers" {
+
+    class AuthController {
+        + login(error : String, logout : String, model : Model, httpServletRequest : HttpServletRequest) : String
+    }
+
+    class DashboardController {
+        - userRepository : UserRepository
+        + getDashboard(model : Model, principal : Principal, httpServletRequest : HttpServletRequest) : String
+    }
+
+    class AuthApiController {
+        - userRepository : UserRepository
+        + AuthApiController(userRepository : UserRepository)
+        + csrf(token : CsrfToken) : Map<String, String>
+        + me(authentication : Authentication) : ResponseEntity<?>
+        + login(body : LoginRequest, request : HttpServletRequest) : ResponseEntity<?>
+        + logout(request : HttpServletRequest) : ResponseEntity<?>
+    }
+
+    class LoginRequest {
+        - email : String
+        - password : String
+        + getEmail() : String
+        + setEmail(email : String) : void
+        + getPassword() : String
+        + setPassword(password : String) : void
+    }
+}
+
+
+package "config" {
+    class SecurityConfig {
+        + securityFilterChain(http : HttpSecurity) : SecurityFilterChain
+        + corsConfigurationSource() : CorsConfigurationSource
+        + passwordEncoder() : PasswordEncoder
+    }
+
+    class CorsConfigurationSource {
+        - allowedOrigins : List<String>
+        - allowCredentials : boolean
+        - allowedMethods : List<String>
+        - allowedHeaders : List<String>
+        - exposedHeaders : List<String>
+    }
+}
+
+
+interface UserDetailsService {
+    + loadUserByUsername(username : String) : UserDetails
+}
+
+interface UserDetails {
+    + getUsername() : String
+    + getPassword() : String
+    + getAuthorities() : Collection
+}
+
+
+
+UserRepository --|> "JpaRepository<User, Long>"
+UserRepository ..> User : manages
+
+
+UserDetailsServ ..|> UserDetailsService
+UserDetailsServ --> UserRepository : uses
+UserDetailsServ ..> UserDetails : returns
+
+
+AuthController --> UserRepository : uses
+DashboardController --> UserRepository : uses
+AuthApiController --> UserRepository : uses
+AuthApiController +-- LoginRequest : contains
+
+
+SecurityConfig --> UserDetailsServ : configures
+SecurityConfig *-- CorsConfigurationSource : owns
+
+
+User "many" --o "1" UserRepository : persisted by
+
+
+@enduml
