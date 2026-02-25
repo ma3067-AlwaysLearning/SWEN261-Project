@@ -1,0 +1,51 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 40px 16px;
+}
+
+.dashboard-wrap {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dashboard-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.info-box {
+  margin-top: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 14px;
+  background: #fafafa;
+}
+
+.error {
+  color: #b91c1c;
+  margin-bottom: 12px;
+}
+
+.logout-btn {
+  margin-top: 16px;
+  border: none;
+  background: #dc2626;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #b91c1c;
+}
