@@ -4,7 +4,7 @@ This consists of a group project collaborated on by 5 people for our SWEN261 Pro
 # Assignment 1
 ## Team Members
 - Mohammed Adil (ID: 415006855)
-- Osama Jameel Wasfat Ahmed (ID: 764000269)
+- Osama Jameel Wasfat Ahmad (ID: 764000269)
 - Abdullah Kair (ID: 377003755)
 - Ahmed Almarri (ID: 769002024)
 - Jason Venkataraghavan (ID: 757001356)
