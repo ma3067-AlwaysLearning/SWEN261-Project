@@ -1,5 +1,6 @@
 package com.example.cersystem.controllers;
 
+import com.example.cersystem.models.Role;
 import com.example.cersystem.models.User;
 import com.example.cersystem.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,7 @@ public class AuthControllerTest {
         testUser.setName("Test User");
         testUser.setEmail("test@rit.edu");
         testUser.setPassword(passwordEncoder.encode("password"));
-        testUser.setRole("USER");
+        testUser.setRole(Role.STUDENT);
         testUser.setUniversity_id("000000000");
 
 

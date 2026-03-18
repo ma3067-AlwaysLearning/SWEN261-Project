@@ -78,7 +78,7 @@ public class AuthApiController {
         response.put("name", user.getName()); // change if your getter is different
         response.put("email", user.getEmail());
         response.put("university_id", user.getUniversity_id()); // change if your getter is different
-        response.put("role", user.getRole());
+        response.put("role", user.getRole().name());
 
         return ResponseEntity.ok(response);
     }

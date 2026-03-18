@@ -46,6 +46,18 @@ export class Dashboard implements OnInit {
     });
   }
 
+  isStudent(): boolean {
+    return this.user?.role === 'STUDENT';
+  }
+
+  isOrganizerOrAdmin(): boolean {
+    return this.user?.role === 'ORGANIZER' || this.user?.role === 'ADMIN';
+  }
+
+  isAdmin(): boolean {
+    return this.user?.role === 'ADMIN';
+  }
+
   onLogout(): void {
     // Get CSRF token first, then logout
     this.auth.getCsrfToken().subscribe({
@@ -64,4 +76,5 @@ export class Dashboard implements OnInit {
       }
     });
   }
+
 }

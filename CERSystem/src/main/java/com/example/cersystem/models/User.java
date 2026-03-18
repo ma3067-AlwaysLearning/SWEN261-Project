@@ -23,8 +23,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column
-    private String role;
+    //Updated to match role enum
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @Column(unique = true, nullable = false)
     private String university_id;
@@ -45,7 +47,7 @@ public class User {
         return password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
@@ -69,7 +71,7 @@ public class User {
         this.password = password;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

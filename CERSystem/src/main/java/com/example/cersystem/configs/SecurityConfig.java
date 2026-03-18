@@ -41,6 +41,31 @@ public class SecurityConfig {
                         // helpful to avoid redirect weirdness on errors
                         .requestMatchers("/error").permitAll()
 
+                        // Any authenticated role can see the dashboard/profile
+                        .requestMatchers("/dashboard").hasAnyRole("STUDENT", "ORGANIZER", "ADMIN")
+
+                        // Story-based examples for future endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/events/**")
+                        .hasAnyRole("STUDENT", "ORGANIZER", "ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/events/register/**")
+                        .hasRole("STUDENT")
+
+                        .requestMatchers(HttpMethod.POST, "/api/events/**")
+                        .hasAnyRole("ORGANIZER", "ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/events/**")
+                        .hasAnyRole("ORGANIZER", "ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/events/**")
+                        .hasAnyRole("ORGANIZER", "ADMIN")
+
+                        .requestMatchers("/api/registrations/**")
+                        .hasAnyRole("ORGANIZER", "ADMIN")
+
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
