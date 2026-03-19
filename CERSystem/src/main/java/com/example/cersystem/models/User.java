@@ -4,6 +4,9 @@ package com.example.cersystem.models;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @Entity
 @Table(name = "users")
@@ -29,6 +32,15 @@ public class User {
     @Column(unique = true, nullable = false)
     private String university_id;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_events",
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "eventId")
+    )
+
+    private List<Event> events = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -53,6 +65,10 @@ public class User {
         return university_id;
     }
 
+    public List<Event> getEvents() {
+        return events;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -75,6 +91,10 @@ public class User {
 
     public void setUniversity_id(String university_id) {
         this.university_id = university_id;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
     }
 }
 
