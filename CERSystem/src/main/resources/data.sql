@@ -1,12 +1,14 @@
+
 /*Dummy records for table users to test if authentication works*/
 INSERT IGNORE INTO users (name, email, password, role, university_id) VALUES
-('Mohammed Adil',  'ma3067@rit.edu',  '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'ADMIN', '415006855'),
-('Osama Ahmed',    'oja5093@rit.edu',    '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'USER',  '764000269'),
+('Mohammed Adil',  'ma3067@rit.edu',  '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'ORGANIZER', '415006855'),
+('Osama Ahmed',    'oja5093@rit.edu',    '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'ADMIN',  '764000269'),
 ('Abdullah Kair',  'ahk3336@rit.edu',  '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'USER',  '377003755'),
 ('Jason Venkataraghavan',  'jnv8919@rit.edu',  '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'USER',  '757001356'),
 ('Ahmed Almarri',  'aaa8902@rit.edu',   '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'USER',  '769002024');
        /*The password is "password" it needs to stored BCryped form, it uses 12 rounds of hashing. */
-INSERT IGNORE INTO events (title, description, scheduled_date, category, location, registration_start, registration_end, start_time, end_time, status, organizer_id) VALUES
+
+INSERT INTO events (title, description, scheduled_date, category, location, registration_start, registration_end, start_time, end_time, status, organizer_id) VALUES
 ('Spring Boot Workshop',      'Hands-on introduction to Spring Boot and REST APIs.',         '2026-04-01', 'Workshop', 'Building H, Room 101', '2026-03-15 08:00:00', '2026-03-31 23:59:59', '2026-04-01 10:00:00', '2026-04-01 12:00:00', 'SCHEDULED', 1),
 ('AI and Machine Learning',   'Overview of machine learning trends and tools.',              '2026-04-03', 'Talk',     'Building B, Room 204', '2026-03-15 08:00:00', '2026-04-02 23:59:59', '2026-04-03 14:00:00', '2026-04-03 16:00:00', 'SCHEDULED', 1),
 ('Campus Clubs',       'Networking social event open to all students.',               '2026-04-05', 'Social',   'Innovation Centre',   '2026-03-20 08:00:00', '2026-04-04 23:59:59', '2026-04-05 18:00:00', '2026-04-05 21:00:00', 'SCHEDULED', 1),
