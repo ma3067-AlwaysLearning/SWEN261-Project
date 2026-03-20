@@ -1,0 +1,25 @@
+.unauthorized-wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #f5f7fb;
+}
+
+.unauthorized-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  width: min(90%, 420px);
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: #1f4fd7;
+  color: white;
+  cursor: pointer;
+}

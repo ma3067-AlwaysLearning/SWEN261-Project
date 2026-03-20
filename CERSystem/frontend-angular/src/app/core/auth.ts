@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export type Role = 'STUDENT' | 'ORGANIZER' | 'ADMIN';
+
 export interface LoginRequest {
   email: string;
   password: string;

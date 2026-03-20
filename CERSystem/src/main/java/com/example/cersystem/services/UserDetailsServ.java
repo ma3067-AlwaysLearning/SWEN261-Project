@@ -30,7 +30,7 @@ public class UserDetailsServ implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRole())
+                .roles(user.getRole().name()) //used .name() for enum
                 .build();
     }
 }
