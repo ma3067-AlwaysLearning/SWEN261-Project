@@ -1,0 +1,66 @@
+<div class="page">
+  <h2>Event Search</h2>
+
+  <p *ngIf="loading">Loading user data...</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div *ngIf="!loading && user" class="user-box">
+    <p><strong>Name:</strong> {{ user.name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>University ID:</strong> {{ user.university_id }}</p>
+    <p><strong>Role:</strong> {{ user.role }}</p>
+  </div>
+
+  <hr />
+
+  <h3>Search & Filter Events</h3>
+
+  <div class="filters">
+    <input
+      type="text"
+      [(ngModel)]="keyword"
+      placeholder="Search by keyword"
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="category"
+      placeholder="Category"
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="location"
+      placeholder="Location"
+    />
+
+    <input
+      type="date"
+      [(ngModel)]="date"
+    />
+
+    <div class="button-row">
+      <button type="button" (click)="applyFilters()">Apply Filters</button>
+      <button type="button" (click)="clearFilters()">Clear Filters</button>
+      <button type="button" (click)="onLogout()">Logout</button>
+    </div>
+  </div>
+
+  <p *ngIf="eventsLoading">Loading events...</p>
+  <p class="error" *ngIf="eventsError">{{ eventsError }}</p>
+
+  <div *ngIf="!eventsLoading && events.length === 0">
+    <p>No events found.</p>
+  </div>
+
+  <div *ngIf="!eventsLoading && events.length > 0" class="event-list">
+    <div *ngFor="let event of events" class="event-card">
+      <h4>{{ event.title }}</h4>
+      <p><strong>Description:</strong> {{ event.description }}</p>
+      <p><strong>Date:</strong> {{ event.scheduledDate }}</p>
+      <p><strong>Category:</strong> {{ event.category }}</p>
+      <p><strong>Location:</strong> {{ event.location }}</p>
+      <p><strong>Status:</strong> {{ event.status }}</p>
+    </div>
+  </div>
+</div>
