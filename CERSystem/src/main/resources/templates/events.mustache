@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>EventNest - Browse Events</title>
+    <link rel="stylesheet" href="/static/style.css"> <!-- add your existing css -->
+    <style>
+        .event-card { border: 1px solid #ccc; padding: 15px; margin: 10px; border-radius: 8px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<input type="hidden" id="csrf-token" value="{{_csrf.token}}"/>
+<h1>Available Events</h1>
+{{#isLoggedIn}}
+    <p>Welcome, <span >{{userEmail}}</span>
+    <form action="/logout" method="post" style="display:inline">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+        <button type="submit">
+            Logout
+        </button>
+    </form>
+    </p>
+{{/isLoggedIn}}
+{{^isLoggedIn}}
+    <p><a href="/login">Login to register</a></p>
+{{/isLoggedIn}}
+
+<div id="message"></div>
+
+{{#events}}
+    <div class="event-card">
+        <h3>{{title}}</h3>
+        <p><strong>Date:</strong> {{scheduledDate}} | <strong>Time:</strong> {{startTime}} - {{endTime}}</p>
+        <p><strong>Location:</strong> {{location}} | <strong>Category:</strong> {{category}}</p>
+        <p>{{description}}</p>
+        <button onclick="registerForEvent({{eventId}}, '{{#isLoggedIn}}{{userEmail}}{{/isLoggedIn}}')"
+                class="register-btn" {{#isLoggedIn}}style="background:#28a745;color:white"{{/isLoggedIn}}>
+            Register
+        </button>
+    </div>
+{{/events}}
+{{^events}}
+    <p>No events yet. (Add some via /api/events POST for testing)</p>
+{{/events}}
+
+<script>
+    async function registerForEvent(eventId) {
+        try {
+            const res = await fetch(`/events/register/${eventId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin"
+            });
+
+            const data = await res.json();
+            console.log("Status:", res.status);
+            console.log("Data:", data);
+
+            const msgDiv = document.getElementById("message");
+            if (data.success) {
+                msgDiv.innerHTML = `<p class="success">${data.message}</p>`;
+                alert(data.message);
+            } else {
+                msgDiv.innerHTML = `<p class="error">${data.message}</p>`;
+                alert(data.message);
+            }
+        } catch (e) {
+            console.error("Error:", e);
+            alert("Error contacting server");
+        }
+    }
+</script>
+
+<br>
+<a href="/dashboard">Back to Dashboard</a>
+</body>
+</html>
