@@ -11,9 +11,17 @@
     </style>
 </head>
 <body>
+<input type="hidden" id="csrf-token" value="{{_csrf.token}}"/>
 <h1>Available Events</h1>
 {{#isLoggedIn}}
-    <p>Welcome, <span >{{userEmail}}</span> | <a href="/logout">Logout</a></p>
+    <p>Welcome, <span >{{userEmail}}</span>
+    <form action="/logout" method="post" style="display:inline">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+        <button type="submit">
+            Logout
+        </button>
+    </form>
+    </p>
 {{/isLoggedIn}}
 {{^isLoggedIn}}
     <p><a href="/login">Login to register</a></p>
@@ -38,36 +46,36 @@
 {{/events}}
 
 <script>
-    async function registerForEvent(eventId, email) {
-        if (!email) {
-            alert("You must be logged in!");
-            return;
-        }
+    async function registerForEvent(eventId) {
         try {
             const res = await fetch(`/events/register/${eventId}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "same-origin"   // sends your JSESSIONID + CSRF
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin"
             });
+
             const data = await res.json();
+            console.log("Status:", res.status);
+            console.log("Data:", data);
 
             const msgDiv = document.getElementById("message");
             if (data.success) {
                 msgDiv.innerHTML = `<p class="success">${data.message}</p>`;
-                alert(data.message);   // matches AC1
+                alert(data.message);
             } else {
                 msgDiv.innerHTML = `<p class="error">${data.message}</p>`;
-                alert(data.message);   // matches AC2 + AC3
+                alert(data.message);
             }
         } catch (e) {
+            console.error("Error:", e);
             alert("Error contacting server");
         }
     }
 </script>
 
-<!-- Quick test buttons (remove after testing) -->
 <br>
-<a href="/events">Refresh Events</a> |
 <a href="/dashboard">Back to Dashboard</a>
 </body>
 </html>
