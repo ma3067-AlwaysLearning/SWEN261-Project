@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>EventNest - Browse Events</title>
+    <link rel="stylesheet" href="/static/style.css"> <!-- add your existing css -->
+    <style>
+        .event-card { border: 1px solid #ccc; padding: 15px; margin: 10px; border-radius: 8px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<h1>Available Events</h1>
+{{#isLoggedIn}}
+    <p>Welcome, <span >{{userEmail}}</span> | <a href="/logout">Logout</a></p>
+{{/isLoggedIn}}
+{{^isLoggedIn}}
+    <p><a href="/login">Login to register</a></p>
+{{/isLoggedIn}}
+
+<div id="message"></div>
+
+{{#events}}
+    <div class="event-card">
+        <h3>{{title}}</h3>
+        <p><strong>Date:</strong> {{scheduledDate}} | <strong>Time:</strong> {{startTime}} - {{endTime}}</p>
+        <p><strong>Location:</strong> {{location}} | <strong>Category:</strong> {{category}}</p>
+        <p>{{description}}</p>
+        <button onclick="registerForEvent({{eventId}}, '{{#isLoggedIn}}{{userEmail}}{{/isLoggedIn}}')"
+                class="register-btn" {{#isLoggedIn}}style="background:#28a745;color:white"{{/isLoggedIn}}>
+            Register
+        </button>
+    </div>
+{{/events}}
+{{^events}}
+    <p>No events yet. (Add some via /api/events POST for testing)</p>
+{{/events}}
+
+<script>
+    async function registerForEvent(eventId, email) {
+        if (!email) {
+            alert("You must be logged in!");
+            return;
+        }
+        try {
+            const res = await fetch(`/events/register/${eventId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin"   // sends your JSESSIONID + CSRF
+            });
+            const data = await res.json();
+
+            const msgDiv = document.getElementById("message");
+            if (data.success) {
+                msgDiv.innerHTML = `<p class="success">${data.message}</p>`;
+                alert(data.message);   // matches AC1
+            } else {
+                msgDiv.innerHTML = `<p class="error">${data.message}</p>`;
+                alert(data.message);   // matches AC2 + AC3
+            }
+        } catch (e) {
+            alert("Error contacting server");
+        }
+    }
+</script>
+
+<!-- Quick test buttons (remove after testing) -->
+<br>
+<a href="/events">Refresh Events</a> |
+<a href="/dashboard">Back to Dashboard</a>
+</body>
+</html>
