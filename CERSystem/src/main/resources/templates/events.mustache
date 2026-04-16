@@ -1,31 +1,94 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>EventNest - Browse Events</title>
-    <link rel="stylesheet" href="/static/style.css"> <!-- add your existing css -->
+    <link rel="stylesheet" href="/style.css">
     <style>
-        .event-card { border: 1px solid #ccc; padding: 15px; margin: 10px; border-radius: 8px; }
+        body { font-family: Arial, sans-serif; margin: 24px; }
+        .top-bar { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+        .filters { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin:20px 0; }
+        .filter-group { display:flex; flex-direction:column; gap:6px; }
+        .filter-actions { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+        .event-card { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 8px; }
         .success { color: green; font-weight: bold; }
         .error { color: red; }
+        .summary { margin: 14px 0; font-weight: 600; }
+        input, select, button { padding: 8px; border-radius: 6px; }
+        button { cursor: pointer; }
+        .secondary-btn { background:#f3f4f6; border:1px solid #d1d5db; text-decoration:none; color:#111827; display:inline-block; }
     </style>
 </head>
 <body>
 <input type="hidden" id="csrf-token" value="{{_csrf.token}}"/>
-<h1>Available Events</h1>
-{{#isLoggedIn}}
-    <p>Welcome, <span >{{userEmail}}</span>
-    <form action="/logout" method="post" style="display:inline">
-        <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
-        <button type="submit">
-            Logout
-        </button>
-    </form>
-    </p>
-{{/isLoggedIn}}
-{{^isLoggedIn}}
-    <p><a href="/login">Login to register</a></p>
-{{/isLoggedIn}}
+
+<div class="top-bar">
+    <div>
+        <h1 style="margin-bottom: 6px;">Available Events</h1>
+        <p style="margin-top:0;">Search by keyword and filter by category, location, organizer, and date range.</p>
+    </div>
+
+    <div>
+        {{#isLoggedIn}}
+            <p>Welcome, <strong>{{userEmail}}</strong></p>
+            <form action="/logout" method="post" style="display:inline">
+                <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+                <button type="submit">Logout</button>
+            </form>
+        {{/isLoggedIn}}
+        {{^isLoggedIn}}
+            <p><a href="/login">Login to register</a></p>
+        {{/isLoggedIn}}
+    </div>
+</div>
+
+<form method="get" action="/events">
+    <div class="filters">
+        <div class="filter-group">
+            <label for="keyword">Keyword</label>
+            <input id="keyword" name="keyword" type="text" value="{{keyword}}" placeholder="workshop, AI, club...">
+        </div>
+
+        <div class="filter-group">
+            <label for="category">Category</label>
+            <input id="category" name="category" type="text" value="{{category}}" placeholder="Workshop, Talk...">
+        </div>
+
+        <div class="filter-group">
+            <label for="location">Location</label>
+            <input id="location" name="location" type="text" value="{{location}}" placeholder="Building H">
+        </div>
+
+        <div class="filter-group">
+            <label for="organizer">Organizer</label>
+            <input id="organizer" name="organizer" type="text" value="{{organizer}}" placeholder="Name or email">
+        </div>
+
+        <div class="filter-group">
+            <label for="startDate">Start date</label>
+            <input id="startDate" name="startDate" type="date" value="{{startDate}}">
+        </div>
+
+        <div class="filter-group">
+            <label for="endDate">End date</label>
+            <input id="endDate" name="endDate" type="date" value="{{endDate}}">
+        </div>
+    </div>
+
+    <div class="filter-actions">
+        <button type="submit">Apply filters</button>
+        <a class="secondary-btn" href="/events" style="padding:8px 12px;">Clear filters</a>
+    </div>
+</form>
+
+<div class="summary">
+    {{#hasFilters}}
+        Showing {{resultCount}} matching event(s).
+    {{/hasFilters}}
+    {{^hasFilters}}
+        Showing all {{resultCount}} event(s).
+    {{/hasFilters}}
+</div>
 
 <div id="message"></div>
 
@@ -34,15 +97,16 @@
         <h3>{{title}}</h3>
         <p><strong>Date:</strong> {{scheduledDate}} | <strong>Time:</strong> {{startTime}} - {{endTime}}</p>
         <p><strong>Location:</strong> {{location}} | <strong>Category:</strong> {{category}}</p>
+        <p><strong>Organizer:</strong> {{organizer.name}}</p>
         <p>{{description}}</p>
-        <button onclick="registerForEvent({{eventId}}, '{{#isLoggedIn}}{{userEmail}}{{/isLoggedIn}}')"
+        <button onclick="registerForEvent({{eventId}})"
                 class="register-btn" {{#isLoggedIn}}style="background:#28a745;color:white"{{/isLoggedIn}}>
             Register
         </button>
     </div>
 {{/events}}
 {{^events}}
-    <p>No events yet. (Add some via /api/events POST for testing)</p>
+    <p>No events matched your current search/filter settings.</p>
 {{/events}}
 
 <script>
@@ -57,9 +121,6 @@
             });
 
             const data = await res.json();
-            console.log("Status:", res.status);
-            console.log("Data:", data);
-
             const msgDiv = document.getElementById("message");
             if (data.success) {
                 msgDiv.innerHTML = `<p class="success">${data.message}</p>`;

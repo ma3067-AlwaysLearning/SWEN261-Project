@@ -3,12 +3,17 @@ package com.example.cersystem.controllers;
 import com.example.cersystem.models.Event;
 import com.example.cersystem.services.EventService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -17,16 +22,34 @@ public class EventController {
 
     private final EventService eventService;
 
-    // Constructor injection
     public EventController(EventService eventService) {
         this.eventService = eventService;
     }
 
     @GetMapping
-    public String showEvents(Model model, Authentication auth, HttpServletRequest httpServletRequest) {
-        model.addAttribute("events", eventService.getAll());
-        model.addAttribute("isLoggedIn", auth != null && auth.isAuthenticated());
-        if (auth != null && auth.isAuthenticated()) {
+    public String showEvents(@RequestParam(required = false) String keyword,
+                             @RequestParam(required = false) String category,
+                             @RequestParam(required = false) String location,
+                             @RequestParam(required = false) String organizer,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                             Model model,
+                             Authentication auth,
+                             HttpServletRequest httpServletRequest) {
+        List<Event> events = eventService.searchAndFilter(keyword, category, location, organizer, startDate, endDate);
+
+        model.addAttribute("events", events);
+        model.addAttribute("keyword", valueOrEmpty(keyword));
+        model.addAttribute("category", valueOrEmpty(category));
+        model.addAttribute("location", valueOrEmpty(location));
+        model.addAttribute("organizer", valueOrEmpty(organizer));
+        model.addAttribute("startDate", startDate != null ? startDate.toString() : "");
+        model.addAttribute("endDate", endDate != null ? endDate.toString() : "");
+        model.addAttribute("hasFilters", hasFilters(keyword, category, location, organizer, startDate, endDate));
+        model.addAttribute("resultCount", events.size());
+        model.addAttribute("isLoggedIn", auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName()));
+
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
             model.addAttribute("userEmail", auth.getName());
         }
 
@@ -34,8 +57,33 @@ public class EventController {
         if (csrfToken != null) {
             model.addAttribute("_csrf", csrfToken);
         }
-        //noinspection SpringMvcViewInspection
-        return "events";  // Mustache template: events.mustache
+
+        return "events";
+    }
+
+    @GetMapping("/api")
+    @ResponseBody
+    public ResponseEntity<?> getEventsApi(@RequestParam(required = false) String keyword,
+                                          @RequestParam(required = false) String category,
+                                          @RequestParam(required = false) String location,
+                                          @RequestParam(required = false) String organizer,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "message", "End date cannot be earlier than start date"
+            ));
+        }
+
+        List<EventSummaryResponse> events = eventService.searchAndFilter(keyword, category, location, organizer, startDate, endDate)
+                .stream()
+                .map(EventSummaryResponse::from)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "count", events.size(),
+                "events", events
+        ));
     }
 
     @PostMapping("/register/{eventId}")
@@ -46,5 +94,52 @@ public class EventController {
             return Map.of("success", false, "message", "Please log in first");
         }
         return eventService.registerForEvent(eventId, auth.getName());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    private boolean hasFilters(String keyword,
+                               String category,
+                               String location,
+                               String organizer,
+                               LocalDate startDate,
+                               LocalDate endDate) {
+        return hasText(keyword) || hasText(category) || hasText(location) || hasText(organizer)
+                || startDate != null || endDate != null;
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+    private String valueOrEmpty(String value) {
+        return value == null ? "" : value;
+    }
+
+    public record EventSummaryResponse(Long eventId,
+                                       String title,
+                                       String description,
+                                       LocalDate scheduledDate,
+                                       String category,
+                                       String location,
+                                       String organizerName,
+                                       String status) {
+        static EventSummaryResponse from(Event event) {
+            return new EventSummaryResponse(
+                    event.getEventId(),
+                    event.getTitle(),
+                    event.getDescription(),
+                    event.getScheduledDate(),
+                    event.getCategory(),
+                    event.getLocation(),
+                    event.getOrganizer() != null ? event.getOrganizer().getName() : null,
+                    event.getStatus()
+            );
+        }
     }
 }
