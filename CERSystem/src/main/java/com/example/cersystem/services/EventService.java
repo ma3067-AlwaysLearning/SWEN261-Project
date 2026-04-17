@@ -24,7 +24,66 @@ public class EventService {
     public List<Event> searchByName(String name) { return eventRepository.findByTitleContainingIgnoreCase(name); }
     public List<Event> searchByCategory(String category) { return eventRepository.findByCategory(category); }
     public List<Event> getAll() { return eventRepository.findAll(); }
+<<<<<<< Updated upstream
     public List<Event> getCollection(String email) {
+=======
+
+    public List<Event> searchAndFilter(String keyword,
+                                       String category,
+                                       String location,
+                                       String organizer,
+                                       LocalDate startDate,
+                                       LocalDate endDate) {
+        Specification<Event> specification = Specification.unrestricted();
+
+        if (hasText(keyword)) {
+            String likeValue = wrapLike(keyword);
+            specification = specification.and((root, query, cb) -> cb.or(
+                    cb.like(cb.lower(root.get("title")), likeValue),
+                    cb.like(cb.lower(root.get("description")), likeValue),
+                    cb.like(cb.lower(root.get("category")), likeValue),
+                    cb.like(cb.lower(root.get("location")), likeValue)
+            ));
+        }
+
+        if (hasText(category)) {
+            specification = specification.and((root, query, cb) ->
+                    cb.equal(cb.lower(root.get("category")), category.trim().toLowerCase()));
+        }
+
+        if (hasText(location)) {
+            String likeValue = wrapLike(location);
+            specification = specification.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("location")), likeValue));
+        }
+
+        if (hasText(organizer)) {
+            String likeValue = wrapLike(organizer);
+            specification = specification.and((root, query, cb) -> {
+                var organizerJoin = root.join("organizer", JoinType.INNER);
+                return cb.or(
+                        cb.like(cb.lower(organizerJoin.get("name")), likeValue),
+                        cb.like(cb.lower(organizerJoin.get("email")), likeValue)
+                );
+            });
+        }
+
+        if (startDate != null) {
+            specification = specification.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("scheduledDate"), startDate));
+        }
+
+        if (endDate != null) {
+            specification = specification.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("scheduledDate"), endDate));
+        }
+
+        return eventRepository.findAll(specification);
+    }
+
+    // Returns all events that the logged in student has registered for
+    public List<Event> getRegisteredEvents(String email) {
+>>>>>>> Stashed changes
         User user = userRepository.findByEmail(email).orElseThrow();
         return user.getEvents();
     }

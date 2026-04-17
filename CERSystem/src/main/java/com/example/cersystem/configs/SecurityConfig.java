@@ -44,12 +44,15 @@ public class SecurityConfig {
                         // Any authenticated role can see the dashboard/profile
                         .requestMatchers("/dashboard").hasAnyRole("STUDENT", "ORGANIZER", "ADMIN")
 
+                        // Only students can open the API that shows their registered events
+                        .requestMatchers(HttpMethod.GET, "/events/my/api").hasRole("STUDENT")
+
+                        // Only students can register for events
+                        .requestMatchers(HttpMethod.POST, "/events/register/**").hasRole("STUDENT")
+
                         // Story-based examples for future endpoints
                         .requestMatchers(HttpMethod.GET, "/api/events/**")
                         .hasAnyRole("STUDENT", "ORGANIZER", "ADMIN")
-
-                        .requestMatchers(HttpMethod.POST, "/api/events/register/**")
-                        .hasRole("STUDENT")
 
                         .requestMatchers(HttpMethod.POST, "/api/events/**")
                         .hasAnyRole("ORGANIZER", "ADMIN")
