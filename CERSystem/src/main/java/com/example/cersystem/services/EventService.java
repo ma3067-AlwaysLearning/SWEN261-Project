@@ -25,10 +25,21 @@ public class EventService {
         this.userRepository = userRepository;
     }
 
-    public Event save(Event event) { return eventRepository.save(event); }
-    public List<Event> searchByName(String name) { return eventRepository.findByTitleContainingIgnoreCase(name); }
-    public List<Event> searchByCategory(String category) { return eventRepository.findByCategoryIgnoreCase(category); }
-    public List<Event> getAll() { return eventRepository.findAll(); }
+    public Event save(Event event) {
+        return eventRepository.save(event);
+    }
+
+    public List<Event> searchByName(String name) {
+        return eventRepository.findByTitleContainingIgnoreCase(name);
+    }
+
+    public List<Event> searchByCategory(String category) {
+        return eventRepository.findByCategoryIgnoreCase(category);
+    }
+
+    public List<Event> getAll() {
+        return eventRepository.findAll();
+    }
 
     public List<Event> searchAndFilter(String keyword,
                                        String category,
@@ -83,7 +94,8 @@ public class EventService {
         return eventRepository.findAll(specification);
     }
 
-    public List<Event> getCollection(String email) {
+    // Returns all events that the logged in student has registered for
+    public List<Event> getRegisteredEvents(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
         return user.getEvents();
     }

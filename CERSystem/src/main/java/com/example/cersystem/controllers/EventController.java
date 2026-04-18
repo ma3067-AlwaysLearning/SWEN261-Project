@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class EventController {
                              Model model,
                              Authentication auth,
                              HttpServletRequest httpServletRequest) {
+
         List<Event> events = eventService.searchAndFilter(keyword, category, location, organizer, startDate, endDate);
 
         model.addAttribute("events", events);
@@ -53,6 +55,8 @@ public class EventController {
         model.addAttribute("hasFilters", hasFilters(keyword, category, location, organizer, startDate, endDate));
         model.addAttribute("resultCount", events.size());
         model.addAttribute("isLoggedIn", auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName()));
+        model.addAttribute("isStudent", auth != null && auth.isAuthenticated()
+                && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT")));
 
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
             model.addAttribute("userEmail", auth.getName());
@@ -74,6 +78,7 @@ public class EventController {
                                           @RequestParam(required = false) String organizer,
                                           @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                           @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
         if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
             return ResponseEntity.badRequest().body(Map.of(
                     "message", "End date cannot be earlier than start date"
@@ -91,11 +96,53 @@ public class EventController {
         ));
     }
 
+    @GetMapping("/my/api")
+    @ResponseBody
+    public ResponseEntity<?> getMyEventsApi(Authentication auth) {
+
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Please log in first");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+
+        List<Event> registeredEvents = eventService.getRegisteredEvents(auth.getName());
+
+        List<Map<String, Object>> events = new ArrayList<>();
+
+        for (Event event : registeredEvents) {
+            Map<String, Object> eventData = new HashMap<>();
+
+            eventData.put("eventId", event.getEventId());
+            eventData.put("title", event.getTitle());
+            eventData.put("description", event.getDescription());
+            eventData.put("scheduledDate", event.getScheduledDate());
+            eventData.put("startTime", event.getStartTime());
+            eventData.put("endTime", event.getEndTime());
+            eventData.put("category", event.getCategory());
+            eventData.put("location", event.getLocation());
+            eventData.put("status", event.getStatus());
+
+            if (event.getOrganizer() != null) {
+                eventData.put("organizerName", event.getOrganizer().getName());
+            } else {
+                eventData.put("organizerName", "");
+            }
+
+            events.add(eventData);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("count", events.size());
+        response.put("events", events);
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/register/{eventId}")
     @ResponseBody
     public Map<String, Object> register(@PathVariable Long eventId, Authentication auth) {
-        if (auth == null || !auth.isAuthenticated()
-                || "anonymousUser".equals(auth.getName())) {
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
             return Map.of("success", false, "message", "Please log in first");
         }
         return eventService.registerForEvent(eventId, auth.getName());
