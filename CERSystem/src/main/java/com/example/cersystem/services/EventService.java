@@ -176,10 +176,7 @@ public class EventService {
         result.put("message", "Event has been cancelled");
         return result;
     }
-    public Event save(Event event) { return eventRepository.save(event); }
-    public List<Event> searchByName(String name) { return eventRepository.findByTitleContainingIgnoreCase(name); }
-    public List<Event> searchByCategory(String category) { return eventRepository.findByCategoryIgnoreCase(category); }
-    public List<Event> getAll() { return eventRepository.findAll(); }
+
     public Map<String, Object> registerForEvent(Long eventId, String email) {
         Map<String, Object> result = new HashMap<>();
 
