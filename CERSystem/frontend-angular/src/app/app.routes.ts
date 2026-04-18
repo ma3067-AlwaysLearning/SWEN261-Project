@@ -4,13 +4,19 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import {authGuard} from './core/auth.guard';
 import {roleGuard} from './core/role.guard';
 import {Unauthorized} from './pages/unauthorized/unauthorized';
+import { CreateEvent } from './pages/create-event/create-event';
 import { MyEvents } from './pages/my-events/my-events';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'dashboard', component: Dashboard },
-
+  {
+    path: 'create-event',
+    component: CreateEvent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ORGANIZER', 'ADMIN'] }   // ← only organizers and admins
+  },
   {
     path: 'student-events',
     component: MyEvents,

@@ -1,8 +1,10 @@
 package com.example.cersystem.controllers;
 
+import com.example.cersystem.dto.EventRequest;
 import com.example.cersystem.models.Event;
 import com.example.cersystem.services.EventService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @Controller
 @RequestMapping("/events")
@@ -189,5 +193,32 @@ public class EventController {
                     event.getStatus()
             );
         }
+    }
+
+    @PostMapping("/api/create")
+    @ResponseBody
+    public ResponseEntity<?> createEvent(@Valid @RequestBody EventRequest request,
+                                         BindingResult bindingResult,
+                                         Authentication auth) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors()
+                    .forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        if (auth == null || !auth.isAuthenticated()
+                || "anonymousUser".equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "You must be logged in"));
+        }
+
+        Event created = eventService.createEvent(request, auth.getName());
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Event created successfully",
+                "eventId", created.getEventId()
+        ));
     }
 }
