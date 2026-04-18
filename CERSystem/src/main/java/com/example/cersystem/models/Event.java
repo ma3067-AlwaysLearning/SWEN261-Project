@@ -42,6 +42,9 @@ public class Event {
     private LocalDateTime endTime;
 
     @Column(nullable = false)
+    private int capacity;
+
+    @Column(nullable = false)
     private String status;
 
     @ManyToOne
@@ -56,7 +59,7 @@ public class Event {
         this.status = "SCHEDULED";
     }
 
-    public Event(User organizer, LocalDateTime endTime, LocalDateTime startTime, LocalDateTime registrationEnd, LocalDateTime registrationStart, String location, String category, String description, LocalDate scheduledDate, String title) {
+    public Event(User organizer, LocalDateTime endTime, LocalDateTime startTime, LocalDateTime registrationEnd, LocalDateTime registrationStart, String location, String category, String description, LocalDate scheduledDate, String title, int capacity) {
         this.organizer = organizer;
         this.endTime = endTime;
         this.startTime = startTime;
@@ -67,6 +70,7 @@ public class Event {
         this.description = description;
         this.scheduledDate = scheduledDate;
         this.title = title;
+        this.capacity=capacity;
     }
 
     public Long getEventId() {
@@ -163,5 +167,13 @@ public class Event {
 
     public void setOrganizer(User organizer) {
         this.organizer = organizer;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }

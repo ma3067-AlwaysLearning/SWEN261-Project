@@ -12,6 +12,43 @@
       <p><strong>Role:</strong> {{ user.role }}</p>
     </div>
 
+    <div *ngIf="!loading && user">
+      <a *ngIf="isStudent()" routerLink="/student-events">My Events</a>
+    </div>
+
+    <div class="role-sections" *ngIf="!loading && user">
+      <div class="role-box" *ngIf="isStudent()">
+        <h3>Student Access</h3>
+        <ul>
+          <li>Browse events</li>
+          <li>Register for events</li>
+          <li>Cannot create, edit, or cancel events</li>
+        </ul>
+      </div>
+
+      <div class="role-box" *ngIf="isOrganizerOrAdmin()">
+        <h3>Organizer/Admin Access</h3>
+        <ul>
+          <li>
+            <a routerLink="/create-event">
+            <button class="create-btn">+ Create New Event</button>
+            </a>
+          </li>
+          <li>Edit events</li>
+          <li>Cancel events</li>
+          <li>View registrations</li>
+        </ul>
+      </div>
+
+      <div class="role-box" *ngIf="isAdmin()">
+        <h3>Admin Extra Access</h3>
+        <ul>
+          <li>Access admin-only pages</li>
+          <li>Manage system-level operations</li>
+        </ul>
+      </div>
+    </div>
+
     <button class="logout-btn" type="button" (click)="onLogout()">
       Logout
     </button>

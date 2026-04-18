@@ -1,5 +1,6 @@
 package com.example.cersystem.controllers;
 
+import com.example.cersystem.models.Role;
 import com.example.cersystem.models.User;
 import com.example.cersystem.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,7 @@ class DashboardControllerTest {
         testUser.setName("Test User");
         testUser.setEmail("test@rit.edu");
         testUser.setPassword(passwordEncoder.encode("password"));
-        testUser.setRole("USER");
+        testUser.setRole(Role.STUDENT);
         testUser.setUniversity_id("000000000");
 
         when(userRepository.findByEmail("test@rit.edu"))
@@ -54,7 +55,7 @@ class DashboardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test@rit.edu", roles = "USER")
+    @WithMockUser(username = "test@rit.edu", roles = "STUDENT")
     void logoutFromDashboard_redirectsToLogin() throws Exception {
         mockMvc.perform(post("/logout")
                         .with(csrf()))
@@ -63,7 +64,7 @@ class DashboardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test@rit.edu", roles = "USER")
+    @WithMockUser(username = "test@rit.edu", roles = "STUDENT")
     void authenticated_DashboardAccessible() throws Exception {
         mockMvc.perform(get("/dashboard"))
                 .andExpect(status().isOk())

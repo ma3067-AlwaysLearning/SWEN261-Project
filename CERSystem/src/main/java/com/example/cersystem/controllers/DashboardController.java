@@ -26,6 +26,8 @@ public class DashboardController {
             model.addAttribute("email",         user.getEmail());
             model.addAttribute("university_id", user.getUniversity_id());
             model.addAttribute("role",          user.getRole());
+            // This will be used in the HTML page to show the "My Events" link only for students
+            model.addAttribute("isStudent",     user.getRole().name().equals("STUDENT"));
         });
 
         CsrfToken csrfToken = (CsrfToken) httpServletRequest.getAttribute("_csrf");

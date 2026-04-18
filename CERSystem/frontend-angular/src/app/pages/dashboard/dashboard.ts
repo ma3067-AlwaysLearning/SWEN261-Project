@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Auth, CurrentUser } from '../../core/auth';
+import { RouterModule } from '@angular/router';
+
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -46,6 +48,18 @@ export class Dashboard implements OnInit {
     });
   }
 
+  isStudent(): boolean {
+    return this.user?.role === 'STUDENT';
+  }
+
+  isOrganizerOrAdmin(): boolean {
+    return this.user?.role === 'ORGANIZER' || this.user?.role === 'ADMIN';
+  }
+
+  isAdmin(): boolean {
+    return this.user?.role === 'ADMIN';
+  }
+
   onLogout(): void {
     // Get CSRF token first, then logout
     this.auth.getCsrfToken().subscribe({
@@ -64,4 +78,5 @@ export class Dashboard implements OnInit {
       }
     });
   }
+
 }

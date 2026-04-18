@@ -1,0 +1,77 @@
+<div class="form-container">
+  <h2>Create New Event</h2>
+
+  <p class="alert success" *ngIf="successMessage">{{ successMessage }}</p>
+  <p class="alert error"   *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="field">
+    <label>Title *</label>
+    <input type="text" [(ngModel)]="event.title" name="title" placeholder="Event title"/>
+    <span class="field-error" *ngIf="fieldErrors['title']">{{ fieldErrors['title'] }}</span>
+  </div>
+
+  <div class="field">
+    <label>Description *</label>
+    <textarea [(ngModel)]="event.description" name="description" placeholder="Event description"></textarea>
+    <span class="field-error" *ngIf="fieldErrors['description']">{{ fieldErrors['description'] }}</span>
+  </div>
+
+  <div class="field">
+    <label>Category *</label>
+    <select [(ngModel)]="event.category" name="category">
+      <option value="">Select a category</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+    <span class="field-error" *ngIf="fieldErrors['category']">{{ fieldErrors['category'] }}</span>
+  </div>
+
+  <div class="field">
+    <label>Location *</label>
+    <input type="text" [(ngModel)]="event.location" name="location" placeholder="Building, Room"/>
+    <span class="field-error" *ngIf="fieldErrors['location']">{{ fieldErrors['location'] }}</span>
+  </div>
+
+  <div class="field">
+    <label>Capacity *</label>
+    <input type="number" [(ngModel)]="event.capacity" name="capacity" min="1"/>
+    <span class="field-error" *ngIf="fieldErrors['capacity']">{{ fieldErrors['capacity'] }}</span>
+  </div>
+
+  <div class="field">
+    <label>Scheduled Date *</label>
+    <input type="date" [(ngModel)]="event.scheduledDate" name="scheduledDate"/>
+    <span class="field-error" *ngIf="fieldErrors['scheduledDate']">{{ fieldErrors['scheduledDate'] }}</span>
+  </div>
+
+  <!-- Time only — date comes from scheduledDate -->
+  <div class="field">
+    <label>Start Time *</label>
+    <input type="time" [(ngModel)]="event.startTime" name="startTime"/>
+    <span class="field-error" *ngIf="fieldErrors['startTime']">{{ fieldErrors['startTime'] }}</span>
+  </div>
+
+  <div class="field">
+    <label>End Time *</label>
+    <input type="time" [(ngModel)]="event.endTime" name="endTime"/>
+    <span class="field-error" *ngIf="fieldErrors['endTime']">{{ fieldErrors['endTime'] }}</span>
+  </div>
+
+  <div class="field">
+    <label>Registration Start *</label>
+    <input type="datetime-local" [(ngModel)]="event.registrationStart" name="registrationStart"/>
+    <span class="field-error" *ngIf="fieldErrors['registrationStart']">{{ fieldErrors['registrationStart'] }}</span>
+  </div>
+
+  <div class="field">
+    <label>Registration End *</label>
+    <input type="datetime-local" [(ngModel)]="event.registrationEnd" name="registrationEnd"/>
+    <span class="field-error" *ngIf="fieldErrors['registrationEnd']">{{ fieldErrors['registrationEnd'] }}</span>
+  </div>
+
+  <div class="button-row">
+    <button (click)="onSubmit()" [disabled]="loading">
+      {{ loading ? 'Creating...' : 'Create Event' }}
+    </button>
+    <button class="secondary" (click)="goBack()">Cancel</button>
+  </div>
+</div>
