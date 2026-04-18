@@ -83,6 +83,7 @@ public class AuthApiController {
         return ResponseEntity.ok(response);
     }
 
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest body, HttpServletRequest request) {
         if (body == null || body.getEmail() == null || body.getPassword() == null

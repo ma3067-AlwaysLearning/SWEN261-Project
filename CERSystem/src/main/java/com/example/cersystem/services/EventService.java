@@ -1,5 +1,6 @@
 package com.example.cersystem.services;
 
+import com.example.cersystem.dto.EventRequest;
 import com.example.cersystem.models.Event;
 import com.example.cersystem.models.User;
 import com.example.cersystem.repositories.EventRepository;
@@ -124,5 +125,26 @@ public class EventService {
 
     private String wrapLike(String value) {
         return "%" + value.trim().toLowerCase() + "%";
+    }
+
+    public Event createEvent(EventRequest request, String organizerEmail) {
+        User organizer = userRepository.findByEmail(organizerEmail)
+                .orElseThrow(() -> new RuntimeException("Organizer not found"));
+
+        Event event = new Event(
+                organizer,
+                request.getEndTime(),
+                request.getStartTime(),
+                request.getRegistrationEnd(),
+                request.getRegistrationStart(),
+                request.getLocation(),
+                request.getCategory(),
+                request.getDescription(),
+                request.getScheduledDate(),
+                request.getTitle(),
+                request.getCapacity()
+        );
+
+        return eventRepository.save(event);
     }
 }

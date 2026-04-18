@@ -25,7 +25,11 @@
       <div class="role-box" *ngIf="isOrganizerOrAdmin()">
         <h3>Organizer/Admin Access</h3>
         <ul>
-          <li>Create events</li>
+          <li>
+            <a routerLink="/create-event">
+            <button class="create-btn">+ Create New Event</button>
+            </a>
+          </li>
           <li>Edit events</li>
           <li>Cancel events</li>
           <li>View registrations</li>

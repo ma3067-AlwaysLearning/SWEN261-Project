@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout",  "/events/register/**" )
+                        .ignoringRequestMatchers("/events/api/create", "/api/auth/login", "/api/auth/logout", "/events/register/**" )
                 )
                 .authorizeHttpRequests((requests) -> requests
                         // allow preflight requests
@@ -36,7 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/events", "/events/api", "/css/**", "/js/**", "/images/**", "/style.css").permitAll()
 
                         // angular auth api
-                        .requestMatchers("/api/auth/csrf", "/api/auth/login", "/api/auth/logout").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
 
                         // helpful to avoid redirect weirdness on errors
                         .requestMatchers("/error").permitAll()
@@ -64,6 +64,9 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/admin/**")
                         .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/events/api/create")
+                        .hasAnyRole("ORGANIZER", "ADMIN")
 
                         .anyRequest().authenticated()
                 )
