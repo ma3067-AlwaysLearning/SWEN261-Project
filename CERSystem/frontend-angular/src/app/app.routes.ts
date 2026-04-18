@@ -4,6 +4,7 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import {authGuard} from './core/auth.guard';
 import {roleGuard} from './core/role.guard';
 import {Unauthorized} from './pages/unauthorized/unauthorized';
+import { MyEvents } from './pages/my-events/my-events';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -12,7 +13,7 @@ export const routes: Routes = [
 
   {
     path: 'student-events',
-    component: Dashboard,
+    component: MyEvents,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['STUDENT'] }
   },

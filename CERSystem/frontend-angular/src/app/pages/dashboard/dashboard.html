@@ -12,6 +12,10 @@
       <p><strong>Role:</strong> {{ user.role }}</p>
     </div>
 
+    <div *ngIf="!loading && user">
+      <a *ngIf="isStudent()" routerLink="/student-events">My Events</a>
+    </div>
+
     <div class="role-sections" *ngIf="!loading && user">
       <div class="role-box" *ngIf="isStudent()">
         <h3>Student Access</h3>
