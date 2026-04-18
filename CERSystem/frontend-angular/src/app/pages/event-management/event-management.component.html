@@ -1,0 +1,48 @@
+<div class="event-management">
+  <h2>My Events (As Organizer)</h2>
+
+  <!-- Edit Form -->
+  <div *ngIf="isEditing" class="edit-form">
+    <h3>Edit Event</h3>
+
+    <label>Title:</label>
+    <input [(ngModel)]="selectedEvent.title" type="text">
+
+    <label>Description:</label>
+    <textarea [(ngModel)]="selectedEvent.description"></textarea>
+
+    <label>Scheduled Date:</label>
+    <input [(ngModel)]="selectedEvent.scheduledDate" type="date">
+
+    <label>Location:</label>
+    <input [(ngModel)]="selectedEvent.location" type="text">
+
+    <button (click)="saveEdit()">Save Changes</button>
+    <button (click)="isEditing = false">Cancel Editing</button>
+  </div>
+
+  <!-- Events List -->
+  <ul class="events-list">
+    <li *ngFor="let event of myEvents" class="event-item">
+      <div>
+        <strong>{{ event.title }}</strong><br>
+        <small>{{ event.scheduledDate }} | {{ event.location }} | Status:
+          <span [style.color]="event.status === 'CANCELLED' ? 'red' : 'green'">
+            {{ event.status }}
+          </span>
+        </small>
+      </div>
+
+      <div class="actions">
+        <button (click)="editEvent(event)">Edit</button>
+        <button *ngIf="event.status !== 'CANCELLED'"
+                (click)="cancelEvent(event.eventId)"
+                class="cancel-btn">
+          Cancel Event
+        </button>
+      </div>
+    </li>
+  </ul>
+
+  <p *ngIf="myEvents.length === 0">No events found.</p>
+</div>
