@@ -1,15 +1,18 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE user_events;
+TRUNCATE TABLE events;
+TRUNCATE TABLE users;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 /*Dummy records for table users to test if authentication works*/
-<<<<<<< Updated upstream
-INSERT IGNORE INTO users (name, email, password, role, university_id) VALUE
-=======
 INSERT IGNORE INTO users (name, email, password, role, university_id) VALUES
 ('Mohammed Adil',  'ma3067@rit.edu',  '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'ORGANIZER', '415006855'),
-('Osama Ahmed',    'oja5093@rit.edu', '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'STUDENT',     '764000269'),
-('Abdullah Kair',  'ahk3336@rit.edu', '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'STUDENT',  '377003755'),
+('Osama Ahmed',    'oja5093@rit.edu', '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'ADMIN',     '764000269'),
+('Abdullah Kair',  'ahk3336@rit.edu', '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'STUDENT',   '377003755'),
 ('Jason Venkataraghavan', 'jnv8919@rit.edu', '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'STUDENT', '757001356'),
-('Ahmed Almarri',  'aaa8902@rit.edu', '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'STUDENT',  '769002024');
->>>>>>> Stashed changes
+('Ahmed Almarri',  'aaa8902@rit.edu', '$2a$12$exik4IGgQgu9.UN47CGgneA9Bi8IcJQGVjBU2Wyjl8Vr2KsKGOKcK', 'STUDENT',   '769002024');
 
 INSERT INTO events (title, description, scheduled_date, category, location, registration_start, registration_end, start_time, end_time, status, organizer_id) VALUES
 ('Spring Boot Workshop',      'Hands-on introduction to Spring Boot and REST APIs.',         '2026-04-01', 'Workshop', 'Building H, Room 101', '2026-03-15 08:00:00', '2026-03-31 23:59:59', '2026-04-01 10:00:00', '2026-04-01 12:00:00', 'SCHEDULED', 1),

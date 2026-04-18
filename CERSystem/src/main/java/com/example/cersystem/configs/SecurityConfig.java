@@ -33,7 +33,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // mustache login/static
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login", "/events", "/events/api", "/css/**", "/js/**", "/images/**", "/style.css").permitAll()
 
                         // angular auth api
                         .requestMatchers("/api/auth/csrf", "/api/auth/login", "/api/auth/logout").permitAll()
@@ -51,8 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/events/register/**").hasRole("STUDENT")
 
                         // Story-based examples for future endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/events/**")
-                        .hasAnyRole("STUDENT", "ORGANIZER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/events/**", "/events/api").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/events/**")
                         .hasAnyRole("ORGANIZER", "ADMIN")
