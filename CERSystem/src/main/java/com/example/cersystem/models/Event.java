@@ -46,17 +46,21 @@ public class Event {
 
     @Column(nullable = false)
     private String status;
-
+  
     @ManyToOne
     @JoinColumn(name = "organizer_id", nullable = false)
     private User organizer;
-
 
     protected Event(){}
 
     @PrePersist
     private void onCreate(){
-        this.status = "SCHEDULED";
+        if (this.status == null || this.status.isBlank()) {
+            this.status = "SCHEDULED";
+        }
+        if (this.capacity < 1) {
+            this.capacity = 30;
+        }
     }
 
     public Event(User organizer, LocalDateTime endTime, LocalDateTime startTime, LocalDateTime registrationEnd, LocalDateTime registrationStart, String location, String category, String description, LocalDate scheduledDate, String title, int capacity) {
@@ -71,6 +75,21 @@ public class Event {
         this.scheduledDate = scheduledDate;
         this.title = title;
         this.capacity=capacity;
+    }
+
+    public boolean hasStarted() {
+        return this.startTime != null && this.startTime.isBefore(LocalDateTime.now());
+    }
+
+    public boolean registrationWindowClosed() {
+        return this.registrationEnd != null && this.registrationEnd.isBefore(LocalDateTime.now());
+    }
+
+    public boolean overlapsWith(Event other) {
+        if (other == null || this.startTime == null || this.endTime == null || other.startTime == null || other.endTime == null) {
+            return false;
+        }
+        return this.startTime.isBefore(other.getEndTime()) && this.endTime.isAfter(other.getStartTime());
     }
 
     public Long getEventId() {
@@ -177,3 +196,4 @@ public class Event {
         this.capacity = capacity;
     }
 }
+

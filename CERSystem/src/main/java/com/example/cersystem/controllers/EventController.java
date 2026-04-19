@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Controller
 @RequestMapping("/events")
 public class EventController {
@@ -106,7 +105,6 @@ public class EventController {
         }
 
         List<Event> registeredEvents = eventService.getRegisteredEvents(auth.getName());
-
         List<Map<String, Object>> events = new ArrayList<>();
 
         for (Event event : registeredEvents) {
@@ -147,6 +145,63 @@ public class EventController {
         return eventService.registerForEvent(eventId, auth.getName());
     }
 
+    @PostMapping("/api/create")
+    @ResponseBody
+    public ResponseEntity<?> createEvent(@Valid @RequestBody EventRequest request,
+                                         BindingResult bindingResult,
+                                         Authentication auth) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors()
+                    .forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "You must be logged in"));
+        }
+
+        Event created = eventService.createEvent(request, auth.getName());
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Event created successfully",
+                "eventId", created.getEventId()
+        ));
+    }
+
+    @DeleteMapping("/cancel/{userId}/{eventId}")
+    public ResponseEntity<String> cancelRegistration(@PathVariable Long userId, @PathVariable Long eventId) {
+        try {
+            eventService.cancelRegistration(userId, eventId);
+            return ResponseEntity.ok("Registration successfully canceled.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An error occurred while canceling the registration.");
+        }
+    }
+    @PutMapping("/{eventId}")
+    @ResponseBody
+    public Map<String, Object> updateEvent(@PathVariable Long eventId,
+                                           @RequestBody Event updatedEvent,
+                                           Authentication auth) {
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+            return Map.of("success", false, "message", "Please log in first");
+        }
+        return eventService.editEvent(eventId, updatedEvent, auth.getName());
+    }
+
+    @PostMapping("/{eventId}/cancel")
+    @ResponseBody
+    public Map<String, Object> cancelEvent(@PathVariable Long eventId, Authentication auth) {
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+            return Map.of("success", false, "message", "Please log in first");
+        }
+        return eventService.cancelEvent(eventId, auth.getName());
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
     public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
@@ -171,44 +226,26 @@ public class EventController {
     private String valueOrEmpty(String value) {
         return value == null ? "" : value;
     }
-
-
-    @PostMapping("/api/create")
-    @ResponseBody
-    public ResponseEntity<?> createEvent(@Valid @RequestBody EventRequest request,
-                                         BindingResult bindingResult,
-                                         Authentication auth) {
-
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            bindingResult.getFieldErrors()
-                    .forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errors);
-        }
-
-        if (auth == null || !auth.isAuthenticated()
-                || "anonymousUser".equals(auth.getName())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "You must be logged in"));
-        }
-
-        Event created = eventService.createEvent(request, auth.getName());
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Event created successfully",
-                "eventId", created.getEventId()
-        ));
-    }
-
-    @DeleteMapping("/cancel/{userId}/{eventId}")
-    public ResponseEntity<String> cancelRegistration(@PathVariable Long userId, @PathVariable Long eventId) {
-        try {
-            eventService.cancelRegistration(userId, eventId);
-            return ResponseEntity.ok("Registration successfully canceled.");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("An error occurred while canceling the registration.");
-        }
-    }
+//
+//    public record EventSummaryResponse(Long eventId,
+//                                       String title,
+//                                       String description,
+//                                       LocalDate scheduledDate,
+//                                       String category,
+//                                       String location,
+//                                       String organizerName,
+//                                       String status) {
+//        static EventSummaryResponse from(Event event) {
+//            return new EventSummaryResponse(
+//                    event.getEventId(),
+//                    event.getTitle(),
+//                    event.getDescription(),
+//                    event.getScheduledDate(),
+//                    event.getCategory(),
+//                    event.getLocation(),
+//                    event.getOrganizer() != null ? event.getOrganizer().getName() : null,
+//                    event.getStatus()
+//            );
+//        }
+//    }
 }

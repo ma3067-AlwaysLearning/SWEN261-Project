@@ -1,25 +1,53 @@
-.unauthorized-wrap {
-  min-height: 100vh;
+:host {
+  display: block;
+}
+
+.unauthorized-page {
   display: grid;
   place-items: center;
-  background: #f5f7fb;
+}
+
+.unauthorized-shell {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
 }
 
 .unauthorized-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  padding: 34px;
   text-align: center;
-  width: min(90%, 420px);
 }
 
-button {
-  margin-top: 1rem;
-  padding: 0.8rem 1.2rem;
-  border: none;
-  border-radius: 10px;
-  background: #1f4fd7;
-  color: white;
-  cursor: pointer;
+.icon-wrap {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  background: #fff5f5;
+  color: #dc2626;
+  font-size: 1.8rem;
+  font-weight: 800;
+  border: 1px solid rgba(220, 38, 38, 0.12);
+}
+
+.unauthorized-card h1 {
+  margin: 14px 0 10px;
+  font-size: 2.2rem;
+  color: var(--text);
+}
+
+.unauthorized-card p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.75;
+}
+
+.actions {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }

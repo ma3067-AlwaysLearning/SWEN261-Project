@@ -1,7 +1,18 @@
-<div class="unauthorized-wrap">
-  <div class="unauthorized-card">
-    <h2>Not Authorized</h2>
-    <p>You do not have permission to access this page.</p>
-    <button type="button" (click)="goBack()">Back to Dashboard</button>
+<div class="page-shell unauthorized-page">
+  <div class="unauthorized-shell">
+    <section class="glass-card unauthorized-card">
+      <div class="icon-wrap">!</div>
+      <span class="page-badge">Access Control</span>
+      <h1>Not authorized</h1>
+      <p>
+        You do not have permission to access this page. Please return to the dashboard
+        and continue with the options available for your role.
+      </p>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="button" (click)="goBack()">Back to Dashboard</button>
+        <a routerLink="/events" class="btn btn-secondary">Browse Events</a>
+      </div>
+    </section>
   </div>
 </div>
