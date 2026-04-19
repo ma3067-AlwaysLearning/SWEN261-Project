@@ -216,26 +216,26 @@ public class EventController {
     private String valueOrEmpty(String value) {
         return value == null ? "" : value;
     }
-
-    public record EventSummaryResponse(Long eventId,
-                                       String title,
-                                       String description,
-                                       LocalDate scheduledDate,
-                                       String category,
-                                       String location,
-                                       String organizerName,
-                                       String status) {
-        static EventSummaryResponse from(Event event) {
-            return new EventSummaryResponse(
-                    event.getEventId(),
-                    event.getTitle(),
-                    event.getDescription(),
-                    event.getScheduledDate(),
-                    event.getCategory(),
-                    event.getLocation(),
-                    event.getOrganizer() != null ? event.getOrganizer().getName() : null,
-                    event.getStatus()
-            );
-        }
-    }
+//
+//    public record EventSummaryResponse(Long eventId,
+//                                       String title,
+//                                       String description,
+//                                       LocalDate scheduledDate,
+//                                       String category,
+//                                       String location,
+//                                       String organizerName,
+//                                       String status) {
+//        static EventSummaryResponse from(Event event) {
+//            return new EventSummaryResponse(
+//                    event.getEventId(),
+//                    event.getTitle(),
+//                    event.getDescription(),
+//                    event.getScheduledDate(),
+//                    event.getCategory(),
+//                    event.getLocation(),
+//                    event.getOrganizer() != null ? event.getOrganizer().getName() : null,
+//                    event.getStatus()
+//            );
+//        }
+//    }
 }
