@@ -20,7 +20,11 @@
       <div class="role-box" *ngIf="isStudent()">
         <h3>Student Access</h3>
         <ul>
-          <li>Browse events</li>
+          <li>
+            <a routerLink="/events">
+            <button class="btn-primary">Browse Events</button>
+            </a>
+          </li>
           <li>Register for events</li>
           <li>Cannot create, edit, or cancel events</li>
         </ul>

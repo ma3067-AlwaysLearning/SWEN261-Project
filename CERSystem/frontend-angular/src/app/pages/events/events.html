@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Events Page</title>
+</head>
+<body>
+  <div class="events-page">
+    <div class="top-bar">
+      <div>
+        <h1>Available Events</h1>
+        <p>Search by keyword and filter by category, location, organizer, and date range.</p>
+      </div>
+
+      <div class="top-bar-actions">
+        <ng-container *ngIf="isLoggedIn(); else loginLink">
+          <span>Welcome, <strong>{{ user?.name }}</strong></span>
+          <button class="btn-secondary" (click)="onLogout()">Logout</button>
+        </ng-container>
+        <ng-template #loginLink>
+          <a routerLink="/login" class="btn-secondary">Login to register</a>
+        </ng-template>
+        <a routerLink="/dashboard" class="btn-secondary">Dashboard</a>
+        <a *ngIf="isOrganizerOrAdmin()" routerLink="/create-event" class="btn-primary">
+          + Create Event
+        </a>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label>Keyword</label>
+        <input type="text" [(ngModel)]="filters.keyword"
+               placeholder="workshop, AI, club..."
+               (keyup.enter)="applyFilters()"/>
+      </div>
+
+      <div class="filter-group">
+        <label>Category</label>
+        <select [(ngModel)]="filters.category">
+          <option value="">All Categories</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Location</label>
+        <input type="text" [(ngModel)]="filters.location"
+               placeholder="Building H"
+               (keyup.enter)="applyFilters()"/>
+      </div>
+
+      <div class="filter-group">
+        <label>Organizer</label>
+        <input type="text" [(ngModel)]="filters.organizer"
+               placeholder="Name or email"
+               (keyup.enter)="applyFilters()"/>
+      </div>
+
+      <div class="filter-group">
+        <label>Start Date</label>
+        <input type="date" [(ngModel)]="filters.startDate"/>
+      </div>
+
+      <div class="filter-group">
+        <label>End Date</label>
+        <input type="date" [(ngModel)]="filters.endDate"/>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-primary" (click)="applyFilters()">Apply Filters</button>
+      <button class="btn-secondary" (click)="clearFilters()">Clear Filters</button>
+    </div>
+
+    <p class="summary" *ngIf="!loading">
+      <ng-container *ngIf="hasFilters">
+        Showing {{ resultCount }} matching event(s).
+      </ng-container>
+      <ng-container *ngIf="!hasFilters">
+        Showing all {{ resultCount }} event(s).
+      </ng-container>
+    </p>
+
+    <p class="alert success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="alert error"   *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <p *ngIf="loading">Loading events...</p>
+
+    <div class="event-list" *ngIf="!loading">
+      <div class="event-card" *ngFor="let event of events">
+        <div class="event-header">
+          <h3>{{ event.title }}</h3>
+          <span class="badge">{{ event.category }}</span>
+        </div>
+
+        <p class="event-meta">
+          <strong>Date:</strong> {{ event.scheduledDate }} &nbsp;|&nbsp;
+          <strong>Time:</strong> {{ event.startTime }} - {{ event.endTime }}
+        </p>
+        <p class="event-meta">
+          <strong>Location:</strong> {{ event.location }} &nbsp;|&nbsp;
+          <strong>Registration:</strong> {{ event.registrationStart }} - {{ event.registrationEnd }}
+        </p>
+
+        <p class="event-meta">
+          <strong>Capacity:</strong> {{ event.capacity }} &nbsp;|&nbsp;
+          <strong>Spots Left:</strong>
+          <span [class.full]="event.spotLeft <= 0">
+            {{ event.spotLeft <= 0 ? 'Full' : event.spotLeft }}
+          </span>
+        </p>
+
+        <p class="event-meta">
+          <strong>Organizer:</strong> {{ event.organizerName }} &nbsp;|&nbsp;
+          <strong>Status:</strong> {{ event.status }}
+        </p>
+
+        <p class="event-description">{{ event.description }}</p>
+
+        <button
+          class="btn-register"
+          *ngIf="isLoggedIn()"
+          [disabled]="event.spotLeft <= 0"
+          [class.btn-full]="event.spotLeft <= 0"
+          (click)="event.spotLeft > 0 && register(event.eventId)">
+          {{ event.spotLeft <= 0 ? 'Event Full' : 'Register' }}
+        </button>
+
+        <a routerLink="/login" class="btn-secondary" *ngIf="!isLoggedIn()">
+          Login to Register
+        </a>
+      </div>
+
+      <p *ngIf="events.length === 0">No events matched your search.</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
