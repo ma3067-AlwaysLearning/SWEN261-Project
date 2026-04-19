@@ -10,7 +10,7 @@ import { EventService, EventSummary, EventFilters } from '../../core/event.servi
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './events.html',
-  styleUrl: './events.css'
+  styleUrls: ['./events.css']
 })
 export class Events implements OnInit {
   user: CurrentUser | null = null;
@@ -38,9 +38,14 @@ export class Events implements OnInit {
 
   ngOnInit(): void {
     this.auth.me().subscribe({
-      next: (user) => this.user = user,
-      error: () => this.user = null
+      next: (user) => {
+        this.user = user;
+      },
+      error: () => {
+        this.user = null;
+      }
     });
+
     this.loadEvents();
   }
 
@@ -75,30 +80,49 @@ export class Events implements OnInit {
       startDate: '',
       endDate: ''
     };
+
     this.hasFilters = false;
     this.loadEvents();
   }
 
   private activeFilters(): EventFilters {
     const f: EventFilters = {};
-    if (this.filters.keyword)   f.keyword   = this.filters.keyword;
-    if (this.filters.category)  f.category  = this.filters.category;
-    if (this.filters.location)  f.location  = this.filters.location;
+
+    if (this.filters.keyword) f.keyword = this.filters.keyword;
+    if (this.filters.category) f.category = this.filters.category;
+    if (this.filters.location) f.location = this.filters.location;
     if (this.filters.organizer) f.organizer = this.filters.organizer;
     if (this.filters.startDate) f.startDate = this.filters.startDate;
-    if (this.filters.endDate)   f.endDate   = this.filters.endDate;
+    if (this.filters.endDate) f.endDate = this.filters.endDate;
+
     return f;
   }
 
   private checkHasFilters(): boolean {
     return !!(
-      this.filters.keyword   ||
-      this.filters.category  ||
-      this.filters.location  ||
+      this.filters.keyword ||
+      this.filters.category ||
+      this.filters.location ||
       this.filters.organizer ||
       this.filters.startDate ||
       this.filters.endDate
     );
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.user;
+  }
+
+  isStudent(): boolean {
+    return this.user?.role === 'STUDENT';
+  }
+
+  isOrganizerOrAdmin(): boolean {
+    return this.user?.role === 'ORGANIZER' || this.user?.role === 'ADMIN';
+  }
+
+  canRegister(): boolean {
+    return this.user?.role === 'STUDENT';
   }
 
   register(eventId: number): void {
@@ -107,7 +131,13 @@ export class Events implements OnInit {
       return;
     }
 
+    if (!this.canRegister()) {
+      this.errorMessage = 'Only students can register for events.';
+      return;
+    }
+
     const event = this.events.find(e => e.eventId === eventId);
+
     if (event && event.spotLeft <= 0) {
       this.errorMessage = 'This event is full.';
       return;
@@ -127,19 +157,15 @@ export class Events implements OnInit {
               this.errorMessage = res.message;
             }
           },
-          error: () => this.errorMessage = 'Registration failed. Please try again.'
+          error: () => {
+            this.errorMessage = 'Registration failed. Please try again.';
+          }
         });
       },
-      error: () => this.errorMessage = 'Could not initialize request.'
+      error: () => {
+        this.errorMessage = 'Could not initialize request.';
+      }
     });
-  }
-
-  isLoggedIn(): boolean {
-    return !!this.user;
-  }
-
-  isOrganizerOrAdmin(): boolean {
-    return this.user?.role === 'ORGANIZER' || this.user?.role === 'ADMIN';
   }
 
   onLogout(): void {
@@ -147,7 +173,7 @@ export class Events implements OnInit {
       next: () => {
         this.auth.logout().subscribe({
           next: () => this.router.navigate(['/login']),
-          error: () => {this.router.navigate(['/login']);}
+          error: () => this.router.navigate(['/login'])
         });
       }
     });

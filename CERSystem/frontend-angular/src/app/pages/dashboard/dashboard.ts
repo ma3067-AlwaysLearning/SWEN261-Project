@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Auth, CurrentUser } from '../../core/auth';
-import { RouterModule } from '@angular/router';
-
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrls: ['./dashboard.css']
 })
 export class Dashboard implements OnInit {
   user: CurrentUser | null = null;
@@ -38,7 +37,6 @@ export class Dashboard implements OnInit {
         this.loading = false;
 
         if (err.status === 401) {
-          // Not logged in -> go back to login
           this.router.navigate(['/login']);
           return;
         }
@@ -61,7 +59,6 @@ export class Dashboard implements OnInit {
   }
 
   onLogout(): void {
-    // Get CSRF token first, then logout
     this.auth.getCsrfToken().subscribe({
       next: () => {
         this.auth.logout().subscribe({
@@ -78,5 +75,4 @@ export class Dashboard implements OnInit {
       }
     });
   }
-
 }

@@ -10,10 +10,9 @@ import { Auth } from '../../core/auth';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './create-event.html',
-  styleUrl: './create-event.css'
+  styleUrls: ['./create-event.css']
 })
 export class CreateEvent {
-
   event = {
     title: '',
     description: '',
@@ -23,8 +22,8 @@ export class CreateEvent {
     capacity: 0,
     registrationStart: '',
     registrationEnd: '',
-    startTime: '',   // time only e.g. "10:00"
-    endTime: ''      // time only e.g. "12:00"
+    startTime: '',
+    endTime: ''
   };
 
   categories = ['Workshop', 'Talk', 'Social', 'Sports', 'Academic'];
@@ -43,67 +42,47 @@ export class CreateEvent {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const scheduledDate  = this.event.scheduledDate  ? new Date(this.event.scheduledDate)  : null;
-    const regStart       = this.event.registrationStart ? new Date(this.event.registrationStart) : null;
-    const regEnd         = this.event.registrationEnd   ? new Date(this.event.registrationEnd)   : null;
+    const scheduledDate = this.event.scheduledDate ? new Date(this.event.scheduledDate) : null;
+    const regStart = this.event.registrationStart ? new Date(this.event.registrationStart) : null;
+    const regEnd = this.event.registrationEnd ? new Date(this.event.registrationEnd) : null;
 
-    // Required field checks
-    if (!this.event.title.trim())
-      this.fieldErrors['title'] = 'Title is required.';
+    if (!this.event.title.trim()) this.fieldErrors['title'] = 'Title is required.';
+    if (!this.event.description.trim()) this.fieldErrors['description'] = 'Description is required.';
+    if (!this.event.category) this.fieldErrors['category'] = 'Category is required.';
+    if (!this.event.location.trim()) this.fieldErrors['location'] = 'Location is required.';
+    if (!this.event.capacity || this.event.capacity < 1) this.fieldErrors['capacity'] = 'Capacity must be at least 1.';
+    if (!this.event.scheduledDate) this.fieldErrors['scheduledDate'] = 'Scheduled date is required.';
+    if (!this.event.startTime) this.fieldErrors['startTime'] = 'Start time is required.';
+    if (!this.event.endTime) this.fieldErrors['endTime'] = 'End time is required.';
+    if (!this.event.registrationStart) this.fieldErrors['registrationStart'] = 'Registration start is required.';
+    if (!this.event.registrationEnd) this.fieldErrors['registrationEnd'] = 'Registration end is required.';
 
-    if (!this.event.description.trim())
-      this.fieldErrors['description'] = 'Description is required.';
-
-    if (!this.event.category)
-      this.fieldErrors['category'] = 'Category is required.';
-
-    if (!this.event.location.trim())
-      this.fieldErrors['location'] = 'Location is required.';
-
-    if (!this.event.capacity || this.event.capacity < 1)
-      this.fieldErrors['capacity'] = 'Capacity must be at least 1.';
-
-    if (!this.event.scheduledDate)
-      this.fieldErrors['scheduledDate'] = 'Scheduled date is required.';
-
-    if (!this.event.startTime)
-      this.fieldErrors['startTime'] = 'Start time is required.';
-
-    if (!this.event.endTime)
-      this.fieldErrors['endTime'] = 'End time is required.';
-
-    if (!this.event.registrationStart)
-      this.fieldErrors['registrationStart'] = 'Registration start is required.';
-
-    if (!this.event.registrationEnd)
-      this.fieldErrors['registrationEnd'] = 'Registration end is required.';
-
-    // Scheduled date cannot be in the past
-    if (scheduledDate && scheduledDate < today)
+    if (scheduledDate && scheduledDate < today) {
       this.fieldErrors['scheduledDate'] = 'Scheduled date cannot be in the past.';
+    }
 
-    // End time cannot be before or equal to start time (on same day)
     if (this.event.startTime && this.event.endTime) {
-      if (this.event.endTime <= this.event.startTime)
+      if (this.event.endTime <= this.event.startTime) {
         this.fieldErrors['endTime'] = 'End time must be after start time.';
+      }
     }
 
-    // Registration end cannot be before registration start
     if (regStart && regEnd) {
-      if (regEnd <= regStart)
+      if (regEnd <= regStart) {
         this.fieldErrors['registrationEnd'] = 'Registration end must be after registration start.';
+      }
     }
 
-    // Registration start cannot be after scheduled date
     if (regStart && scheduledDate) {
-      if (regStart > scheduledDate)
+      if (regStart > scheduledDate) {
         this.fieldErrors['registrationStart'] = 'Registration cannot start after the event date.';
+      }
     }
 
-    // Registration end cannot be after scheduled date
     if (regEnd && scheduledDate) {
-      if (regEnd > scheduledDate)
+      if (regEnd > scheduledDate) {
         this.fieldErrors['registrationEnd'] = 'Registration must close on or before the event date.';
+      }
     }
 
     return Object.keys(this.fieldErrors).length === 0;
@@ -120,18 +99,17 @@ export class CreateEvent {
     this.successMessage = '';
     this.loading = true;
 
-    // Combine scheduledDate + time fields into full LocalDateTime strings
     const payload: EventRequest = {
-      title:             this.event.title,
-      description:       this.event.description,
-      scheduledDate:     this.event.scheduledDate,
-      category:          this.event.category,
-      location:          this.event.location,
-      capacity:          this.event.capacity,
+      title: this.event.title,
+      description: this.event.description,
+      scheduledDate: this.event.scheduledDate,
+      category: this.event.category,
+      location: this.event.location,
+      capacity: this.event.capacity,
       registrationStart: this.event.registrationStart + ':00',
-      registrationEnd:   this.event.registrationEnd   + ':00',
-      startTime:         this.buildDateTime(this.event.scheduledDate, this.event.startTime),
-      endTime:           this.buildDateTime(this.event.scheduledDate, this.event.endTime)
+      registrationEnd: this.event.registrationEnd + ':00',
+      startTime: this.buildDateTime(this.event.scheduledDate, this.event.startTime),
+      endTime: this.buildDateTime(this.event.scheduledDate, this.event.endTime)
     };
 
     this.auth.getCsrfToken().subscribe({

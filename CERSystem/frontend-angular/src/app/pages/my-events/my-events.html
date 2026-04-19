@@ -1,29 +1,64 @@
-<div class="dashboard-wrap">
-  <div class="dashboard-card">
-    <h2>My Events</h2>
-
-    <p *ngIf="loading">Loading your events...</p>
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-    <div *ngIf="!loading && events.length > 0">
-      <p><strong>Total registered events:</strong> {{ events.length }}</p>
-
-      <div class="role-box" *ngFor="let event of events">
-        <h3>{{ event.title }}</h3>
-        <p><strong>Date:</strong> {{ event.scheduledDate }}</p>
-        <p><strong>Time:</strong> {{ event.startTime }} - {{ event.endTime }}</p>
-        <p><strong>Location:</strong> {{ event.location }}</p>
-        <p><strong>Category:</strong> {{ event.category }}</p>
-        <p><strong>Organizer:</strong> {{ event.organizerName }}</p>
-        <p><strong>Status:</strong> {{ event.status }}</p>
-        <p>{{ event.description }}</p>
+<div class="page-shell">
+  <div class="page-container my-events-shell">
+    <section class="glass-card my-events-hero">
+      <div>
+        <span class="page-badge">My Events</span>
+        <h1 class="page-title">Your registered events</h1>
+        <p class="page-subtitle">
+          Review the sessions you already joined, check the details, and keep your schedule organized.
+        </p>
       </div>
-    </div>
 
-    <div class="role-box" *ngIf="!loading && events.length === 0">
-      <p>You did not register for any events yet.</p>
-    </div>
+      <div class="header-actions">
+        <div class="count-pill" *ngIf="!loading">{{ events.length }} registered</div>
+        <a routerLink="/events" class="btn btn-secondary">Browse Events</a>
+        <a routerLink="/dashboard" class="btn btn-primary">Back to Dashboard</a>
+      </div>
+    </section>
 
-    <a routerLink="/dashboard">Back to Dashboard</a>
+    <p class="helper-text" *ngIf="loading">Loading your events...</p>
+    <p class="alert error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <section class="my-events-grid" *ngIf="!loading && events.length > 0">
+      <article class="soft-card my-event-card" *ngFor="let event of events">
+        <div class="card-top">
+          <div>
+            <span class="category-kicker">{{ event.category }}</span>
+            <h3>{{ event.title }}</h3>
+          </div>
+
+          <span class="status-pill">{{ event.status }}</span>
+        </div>
+
+        <p class="event-description">{{ event.description }}</p>
+
+        <div class="details-grid">
+          <div class="detail-box">
+            <span>Date</span>
+            <strong>{{ event.scheduledDate }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <span>Time</span>
+            <strong>{{ event.startTime }} - {{ event.endTime }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <span>Location</span>
+            <strong>{{ event.location }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <span>Organizer</span>
+            <strong>{{ event.organizerName }}</strong>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="empty-card" *ngIf="!loading && events.length === 0">
+      <h3>No registered events yet</h3>
+      <p>Browse available events and start building your list.</p>
+    </section>
   </div>
 </div>

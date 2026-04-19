@@ -1,60 +1,99 @@
-<div class="dashboard-wrap">
-  <div class="dashboard-card">
-    <h2>Welcome to Your Dashboard</h2>
-
-    <p *ngIf="loading">Loading user data...</p>
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-    <div class="info-box" *ngIf="!loading && user">
-      <p><strong>Name:</strong> {{ user.name }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
-      <p><strong>University ID:</strong> {{ user.university_id }}</p>
-      <p><strong>Role:</strong> {{ user.role }}</p>
-    </div>
-
-    <div *ngIf="!loading && user">
-      <a *ngIf="isStudent()" routerLink="/student-events">My Events</a>
-    </div>
-
-    <div class="role-sections" *ngIf="!loading && user">
-      <div class="role-box" *ngIf="isStudent()">
-        <h3>Student Access</h3>
-        <ul>
-          <li>
-            <a routerLink="/events">
-            <button class="btn-primary">Browse Events</button>
-            </a>
-          </li>
-          <li>Register for events</li>
-          <li>Cannot create, edit, or cancel events</li>
-        </ul>
+<div class="page-shell">
+  <div class="page-container">
+    <section class="glass-card dashboard-hero">
+      <div>
+        <span class="page-badge">Dashboard</span>
+        <h1 class="page-title">Welcome back<span *ngIf="user">, {{ user.name }}</span></h1>
+        <p class="page-subtitle">
+          Manage your account, browse events, and access the tools available for your role.
+        </p>
       </div>
 
-      <div class="role-box" *ngIf="isOrganizerOrAdmin()">
-        <h3>Organizer/Admin Access</h3>
-        <ul>
-          <li>
-            <a routerLink="/create-event">
-            <button class="create-btn">+ Create New Event</button>
-            </a>
-          </li>
-          <li>Edit events</li>
-          <li>Cancel events</li>
-          <li>View registrations</li>
-        </ul>
+      <div class="header-actions">
+        <a routerLink="/events" class="btn btn-secondary">Browse Events</a>
+        <button class="btn btn-danger" type="button" (click)="onLogout()">Logout</button>
       </div>
+    </section>
 
-      <div class="role-box" *ngIf="isAdmin()">
-        <h3>Admin Extra Access</h3>
-        <ul>
-          <li>Access admin-only pages</li>
-          <li>Manage system-level operations</li>
-        </ul>
-      </div>
+    <p class="helper-text" *ngIf="loading">Loading your dashboard...</p>
+    <p class="alert error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="dashboard-grid" *ngIf="!loading && user">
+      <section class="soft-card profile-card">
+        <div class="profile-head">
+          <div class="avatar">{{ user.name.charAt(0) }}</div>
+
+          <div class="profile-info">
+            <h2>{{ user.name }}</h2>
+            <p>{{ user.email }}</p>
+          </div>
+
+          <span
+            class="role-pill"
+            [class.organizer]="user.role === 'ORGANIZER'"
+            [class.admin]="user.role === 'ADMIN'"
+          >
+            {{ user.role }}
+          </span>
+        </div>
+
+        <div class="profile-grid">
+          <div class="info-box">
+            <span>University ID</span>
+            <strong>{{ user.university_id }}</strong>
+          </div>
+
+          <div class="info-box">
+            <span>Email</span>
+            <strong>{{ user.email }}</strong>
+          </div>
+
+          <div class="info-box">
+            <span>Role</span>
+            <strong>{{ user.role }}</strong>
+          </div>
+
+          <div class="info-box">
+            <span>Access</span>
+            <strong>
+              {{ isAdmin() ? 'Full admin access' : (isOrganizerOrAdmin() ? 'Organizer tools enabled' : 'Student self-service') }}
+            </strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="soft-card actions-card">
+        <div class="section-top">
+          <h2>Quick actions</h2>
+          <p>Jump directly into the most important parts of the application.</p>
+        </div>
+
+        <div class="action-grid">
+          <a routerLink="/events" class="action-tile primary">
+            <span class="tile-kicker">Explore</span>
+            <h3>Browse Events</h3>
+            <p>Search events, check details, and register quickly.</p>
+          </a>
+
+          <a *ngIf="isStudent()" routerLink="/student-events" class="action-tile">
+            <span class="tile-kicker">Student</span>
+            <h3>My Events</h3>
+            <p>See the events you already registered for in one place.</p>
+          </a>
+
+          <a *ngIf="isOrganizerOrAdmin()" routerLink="/create-event" class="action-tile">
+            <span class="tile-kicker">Organizer</span>
+            <h3>Create Event</h3>
+            <p>Publish a new event with scheduling and registration settings.</p>
+          </a>
+
+          <div *ngIf="isAdmin()" class="action-tile muted">
+            <span class="tile-kicker">Admin</span>
+            <h3>System Access</h3>
+            <p>You have admin-level access for broader system operations.</p>
+          </div>
+        </div>
+      </section>
     </div>
-
-    <button class="logout-btn" type="button" (click)="onLogout()">
-      Logout
-    </button>
   </div>
 </div>
