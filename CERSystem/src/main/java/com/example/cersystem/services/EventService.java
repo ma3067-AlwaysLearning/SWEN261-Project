@@ -7,6 +7,7 @@ import com.example.cersystem.models.User;
 import com.example.cersystem.repositories.EventRepository;
 import com.example.cersystem.repositories.UserRepository;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -279,5 +280,22 @@ public class EventService {
                 ))
 
                 .toList();
+    }
+
+    @Transactional
+    public void cancelRegistration(Long userId, Long eventId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found."));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalStateException("Event not found."));
+
+        if (user.getEvents().contains(event)) {
+            user.getEvents().remove(event);
+            userRepository.save(user);
+            eventRepository.save(event);
+        } else {
+            throw new IllegalStateException("User is not registered for this event.");
+        }
     }
 }

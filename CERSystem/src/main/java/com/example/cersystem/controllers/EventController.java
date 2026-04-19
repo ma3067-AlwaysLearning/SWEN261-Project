@@ -17,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -172,6 +171,17 @@ public class EventController {
         ));
     }
 
+    @DeleteMapping("/cancel/{userId}/{eventId}")
+    public ResponseEntity<String> cancelRegistration(@PathVariable Long userId, @PathVariable Long eventId) {
+        try {
+            eventService.cancelRegistration(userId, eventId);
+            return ResponseEntity.ok("Registration successfully canceled.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An error occurred while canceling the registration.");
+        }
+    }
     @PutMapping("/{eventId}")
     @ResponseBody
     public Map<String, Object> updateEvent(@PathVariable Long eventId,
