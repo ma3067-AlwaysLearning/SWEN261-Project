@@ -1,6 +1,7 @@
 package com.example.cersystem.services;
 
 import com.example.cersystem.dto.EventRequest;
+import com.example.cersystem.dto.EventSummaryResponse;
 import com.example.cersystem.models.Event;
 import com.example.cersystem.models.User;
 import com.example.cersystem.repositories.EventRepository;
@@ -117,6 +118,13 @@ public class EventService {
             return result;
         }
 
+        long registeredCount = userRepository.countByEventsEventId(eventId);
+        if (registeredCount >= event.getCapacity()) {
+            result.put("success", false);
+            result.put("message", "This event is full");
+            return result;
+        }
+
         if (user.getEvents().stream().anyMatch(e -> e.getEventId().equals(eventId))) {
             result.put("success", false);
             result.put("message", "You are already registered for this event");
@@ -158,5 +166,18 @@ public class EventService {
         );
 
         return eventRepository.save(event);
+    }
+
+    public List<EventSummaryResponse> getAllSummaries(String keyword, String category,
+                                                      String location, String organizer,
+                                                      LocalDate startDate, LocalDate endDate) {
+        return searchAndFilter(keyword, category, location, organizer, startDate, endDate)
+                .stream()
+                .map(event -> EventSummaryResponse.from(
+                        event,
+                        userRepository.countByEventsEventId(event.getEventId())  // ← counted here
+                ))
+
+                .toList();
     }
 }
