@@ -1,6 +1,7 @@
 package com.example.cersystem.controllers;
 
 import com.example.cersystem.dto.EventRequest;
+import com.example.cersystem.dto.EventSummaryResponse;
 import com.example.cersystem.models.Event;
 import com.example.cersystem.services.EventService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,10 +86,8 @@ public class EventController {
             ));
         }
 
-        List<EventSummaryResponse> events = eventService.searchAndFilter(keyword, category, location, organizer, startDate, endDate)
-                .stream()
-                .map(EventSummaryResponse::from)
-                .toList();
+        List<EventSummaryResponse> events = eventService.getAllSummaries(
+                keyword, category, location, organizer, startDate, endDate);
 
         return ResponseEntity.ok(Map.of(
                 "count", events.size(),

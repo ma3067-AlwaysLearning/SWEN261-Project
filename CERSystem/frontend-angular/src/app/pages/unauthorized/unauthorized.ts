@@ -6,7 +6,7 @@ import { Router, RouterModule } from '@angular/router';
   standalone: true,
   imports: [RouterModule],
   templateUrl: './unauthorized.html',
-  styleUrl: './unauthorized.css'
+  styleUrls: ['./unauthorized.css']
 })
 export class Unauthorized {
   constructor(private router: Router) {}

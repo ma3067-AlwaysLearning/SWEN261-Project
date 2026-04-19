@@ -1,0 +1,201 @@
+<div class="page-shell">
+  <div class="page-container">
+    <section class="glass-card events-hero">
+      <div>
+        <span class="page-badge">Events</span>
+        <h1 class="page-title">Available Events</h1>
+        <p class="page-subtitle">
+          Discover upcoming university events, filter them quickly, and register through a cleaner
+          and more polished interface.
+        </p>
+
+        <div class="hero-user" *ngIf="isLoggedIn()">
+          <span>Signed in as</span>
+          <strong>{{ user?.name }}</strong>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a routerLink="/dashboard" class="btn btn-secondary">Dashboard</a>
+
+        <a
+          *ngIf="isOrganizerOrAdmin()"
+          routerLink="/create-event"
+          class="btn btn-primary"
+        >
+          Create Event
+        </a>
+
+        <button
+          *ngIf="isLoggedIn()"
+          class="btn btn-danger"
+          type="button"
+          (click)="onLogout()"
+        >
+          Logout
+        </button>
+
+        <a
+          *ngIf="!isLoggedIn()"
+          routerLink="/login"
+          class="btn btn-primary"
+        >
+          Login
+        </a>
+      </div>
+    </section>
+
+    <section class="soft-card filters-card">
+      <div class="filters-header">
+        <div>
+          <h2>Filter events</h2>
+          <p>Use keyword, category, location, organizer, or date range.</p>
+        </div>
+
+        <div class="results-pill" *ngIf="!loading">
+          {{ resultCount }} {{ resultCount === 1 ? 'event' : 'events' }}
+        </div>
+      </div>
+
+      <div class="filters-grid">
+        <div class="form-field">
+          <label for="keyword">Keyword</label>
+          <input
+            id="keyword"
+            type="text"
+            [(ngModel)]="filters.keyword"
+            placeholder="Workshop, AI, club..."
+            (keyup.enter)="applyFilters()"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="category">Category</label>
+          <select id="category" [(ngModel)]="filters.category">
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="location">Location</label>
+          <input
+            id="location"
+            type="text"
+            [(ngModel)]="filters.location"
+            placeholder="Building H"
+            (keyup.enter)="applyFilters()"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="organizer">Organizer</label>
+          <input
+            id="organizer"
+            type="text"
+            [(ngModel)]="filters.organizer"
+            placeholder="Name or email"
+            (keyup.enter)="applyFilters()"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="startDate">Start Date</label>
+          <input id="startDate" type="date" [(ngModel)]="filters.startDate" />
+        </div>
+
+        <div class="form-field">
+          <label for="endDate">End Date</label>
+          <input id="endDate" type="date" [(ngModel)]="filters.endDate" />
+        </div>
+      </div>
+
+      <div class="filters-actions">
+        <button class="btn btn-primary" type="button" (click)="applyFilters()">
+          Apply Filters
+        </button>
+
+        <button class="btn btn-secondary" type="button" (click)="clearFilters()">
+          Clear
+        </button>
+      </div>
+    </section>
+
+    <div class="feedback-row">
+      <p class="helper-text" *ngIf="!loading && hasFilters">Showing filtered results.</p>
+      <p class="helper-text" *ngIf="!loading && !hasFilters">Showing all available events.</p>
+      <p class="alert success" *ngIf="successMessage">{{ successMessage }}</p>
+      <p class="alert error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="helper-text" *ngIf="loading">Loading events...</p>
+    </div>
+
+    <section class="events-grid" *ngIf="!loading && events.length > 0">
+      <article class="soft-card event-card" *ngFor="let event of events">
+        <div class="event-top">
+          <div>
+            <span class="event-organizer">{{ event.organizerName }}</span>
+            <h3>{{ event.title }}</h3>
+          </div>
+
+          <span class="category-tag">{{ event.category }}</span>
+        </div>
+
+        <p class="event-description">{{ event.description }}</p>
+
+        <div class="event-meta">
+          <div class="meta-box">
+            <span>Date</span>
+            <strong>{{ event.scheduledDate }}</strong>
+          </div>
+
+          <div class="meta-box">
+            <span>Time</span>
+            <strong>{{ event.startTime }} - {{ event.endTime }}</strong>
+          </div>
+
+          <div class="meta-box">
+            <span>Location</span>
+            <strong>{{ event.location }}</strong>
+          </div>
+
+          <div class="meta-box">
+            <span>Registration</span>
+            <strong>{{ event.registrationStart }} - {{ event.registrationEnd }}</strong>
+          </div>
+        </div>
+
+        <div class="event-bottom">
+          <div class="status-group">
+            <span class="status-tag">{{ event.status }}</span>
+            <span class="spots-tag" [class.full]="event.spotLeft <= 0">
+              {{ event.spotLeft <= 0 ? 'Full' : (event.spotLeft + ' spots left') }}
+            </span>
+          </div>
+
+          <button
+            *ngIf="canRegister()"
+            class="btn btn-success action-btn"
+            type="button"
+            [disabled]="event.spotLeft <= 0"
+            (click)="event.spotLeft > 0 && register(event.eventId)"
+          >
+            {{ event.spotLeft <= 0 ? 'Event Full' : 'Register' }}
+          </button>
+
+          <a
+            *ngIf="!isLoggedIn()"
+            routerLink="/login"
+            class="btn btn-primary action-btn"
+          >
+            Login to Register
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <section class="empty-card" *ngIf="!loading && events.length === 0">
+      <h3>No events found</h3>
+      <p>Try changing the filters or using a broader keyword.</p>
+    </section>
+  </div>
+</div>

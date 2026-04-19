@@ -17,4 +17,3 @@ INSERT INTO events (title, description, scheduled_date, category, location, regi
 ('Database Design Workshop',  'Practical guide to relational database design with JPA.',    '2026-04-15', 'Workshop', 'Building B, Room G001',    '2026-04-01 08:00:00', '2026-04-14 23:59:59', '2026-04-15 10:00:00', '2026-04-15 12:00:00', 'SCHEDULED', 10,1),
 ('Career Fair Co-Op Preparation',  'Resume writing and interview preparation for final years.',  '2026-04-17', 'Academic', 'Building H, Room 214',        '2026-04-01 08:00:00', '2026-04-16 23:59:59', '2026-04-17 14:00:00', '2026-04-17 16:00:00', 'SCHEDULED', 10,1),
 ('End of Semester Goals',    'A talk event for all students that want to get tips to be satisfied by the end of the semester.',       '2026-04-20', 'Talk',   'Building H, Room 200',    '2026-04-05 08:00:00', '2026-04-19 23:59:59', '2026-04-20 17:00:00', '2026-04-20 20:00:00', 'SCHEDULED', 10, 1);
-
