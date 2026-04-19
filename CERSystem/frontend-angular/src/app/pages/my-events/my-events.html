@@ -17,6 +17,7 @@
         <p><strong>Organizer:</strong> {{ event.organizerName }}</p>
         <p><strong>Status:</strong> {{ event.status }}</p>
         <p>{{ event.description }}</p>
+        <button (click)="cancelRegistration(event.eventId)">Cancel Registration</button>
       </div>
     </div>
 

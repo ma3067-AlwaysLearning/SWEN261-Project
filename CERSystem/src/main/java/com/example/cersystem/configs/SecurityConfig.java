@@ -26,11 +26,13 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/events/api/create", "/api/auth/login", "/api/auth/logout", "/events/register/**" )
+                        .ignoringRequestMatchers("/events/api/create", "/api/auth/login", "/api/auth/logout", "/events/register/**", "/events/cancel/**" )
                 )
                 .authorizeHttpRequests((requests) -> requests
                         // allow preflight requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        .requestMatchers(HttpMethod.DELETE, "/events/cancel/**").permitAll()
 
                         // mustache login/static
                         .requestMatchers("/login", "/events", "/events/api", "/css/**", "/js/**", "/images/**", "/style.css").permitAll()

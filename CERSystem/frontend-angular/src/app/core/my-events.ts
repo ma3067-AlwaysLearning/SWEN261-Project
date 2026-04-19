@@ -39,4 +39,8 @@ export class MyEventsApi {
   getMyEvents(): Observable<MyEventsResponse> {
     return this.http.get<MyEventsResponse>('/events/my/api', { withCredentials: true });
   }
+
+  cancelEvent(eventId: number, userId: number) {
+    return this.http.delete(`http://localhost:8080/events/cancel/${userId}/${eventId}`, { responseType: 'text' });
+  }
 }
