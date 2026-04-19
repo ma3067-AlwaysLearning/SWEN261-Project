@@ -37,6 +37,8 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
   },
+  { path: 'event-management', component: EventManagementComponent },
+
 
   { path: 'unauthorized', component: Unauthorized }
 ];

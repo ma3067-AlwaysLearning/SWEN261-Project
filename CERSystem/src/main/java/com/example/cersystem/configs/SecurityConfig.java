@@ -26,7 +26,13 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/events/api/create", "/api/auth/login", "/api/auth/logout", "/events/register/**" )
+                        .ignoringRequestMatchers(
+                                "/events/api/create",
+                                "/api/auth/login",
+                                "/api/auth/logout",
+                                "/events/register/**",
+                                "/api/events/**"
+                        )
                 )
                 .authorizeHttpRequests((requests) -> requests
                         // allow preflight requests

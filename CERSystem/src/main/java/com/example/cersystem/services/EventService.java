@@ -47,7 +47,11 @@ public class EventService {
                                        String organizer,
                                        LocalDate startDate,
                                        LocalDate endDate) {
-        Specification<Event> specification = Specification.unrestricted();
+        Specification<Event> specification = (root, query, cb) ->
+                cb.or(
+                        cb.isNull(root.get("status")),
+                        cb.notEqual(cb.upper(root.get("status")), "CANCELLED")
+                );
 
         if (hasText(keyword)) {
             String likeValue = wrapLike(keyword);
@@ -94,14 +98,18 @@ public class EventService {
         return eventRepository.findAll(specification);
     }
 
-    // Returns all events that the logged in student has registered for
     public List<Event> getRegisteredEvents(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
         return user.getEvents();
     }
 
+    public List<Event> getOrganizerEvents(String email) {
+        return eventRepository.findByOrganizer_EmailIgnoreCase(email)
+                .stream()
+                .filter(event -> event.getStatus() == null || !"CANCELLED".equalsIgnoreCase(event.getStatus()))
+                .toList();
+    }
 
-    // US-09: Edit Event
     public Map<String, Object> editEvent(Long eventId, Event updatedEvent, String organizerEmail) {
         Map<String, Object> result = new HashMap<>();
 
@@ -119,33 +127,48 @@ public class EventService {
             return result;
         }
 
-        // Only owner can edit
-        if (!event.getOrganizer().getEmail().equals(organizerEmail)) {
+        if (event.getOrganizer() == null || !event.getOrganizer().getEmail().equalsIgnoreCase(organizerEmail)) {
             result.put("success", false);
             result.put("message", "You can only edit your own events");
             return result;
         }
 
-        // Update fields
-        event.setTitle(updatedEvent.getTitle());
-        event.setDescription(updatedEvent.getDescription());
-        event.setScheduledDate(updatedEvent.getScheduledDate());
-        event.setCategory(updatedEvent.getCategory());
-        event.setLocation(updatedEvent.getLocation());
-        event.setRegistrationStart(updatedEvent.getRegistrationStart());
-        event.setRegistrationEnd(updatedEvent.getRegistrationEnd());
-        event.setStartTime(updatedEvent.getStartTime());
-        event.setEndTime(updatedEvent.getEndTime());
+        if (updatedEvent.getTitle() != null) {
+            event.setTitle(updatedEvent.getTitle());
+        }
+        if (updatedEvent.getDescription() != null) {
+            event.setDescription(updatedEvent.getDescription());
+        }
+        if (updatedEvent.getScheduledDate() != null) {
+            event.setScheduledDate(updatedEvent.getScheduledDate());
+        }
+        if (updatedEvent.getCategory() != null) {
+            event.setCategory(updatedEvent.getCategory());
+        }
+        if (updatedEvent.getLocation() != null) {
+            event.setLocation(updatedEvent.getLocation());
+        }
+        if (updatedEvent.getRegistrationStart() != null) {
+            event.setRegistrationStart(updatedEvent.getRegistrationStart());
+        }
+        if (updatedEvent.getRegistrationEnd() != null) {
+            event.setRegistrationEnd(updatedEvent.getRegistrationEnd());
+        }
+        if (updatedEvent.getStartTime() != null) {
+            event.setStartTime(updatedEvent.getStartTime());
+        }
+        if (updatedEvent.getEndTime() != null) {
+            event.setEndTime(updatedEvent.getEndTime());
+        }
 
         eventRepository.save(event);
 
         result.put("success", true);
         result.put("message", "Event updated successfully");
-        result.put("event", event);
+        result.put("eventId", event.getEventId());
         return result;
     }
 
-    // === US-09: Cancel Event ===
     public Map<String, Object> cancelEvent(Long eventId, String organizerEmail) {
         Map<String, Object> result = new HashMap<>();
 
@@ -194,18 +217,12 @@ public class EventService {
             return result;
         }
 
-        // duplicate check
         if (user.getEvents().stream().anyMatch(e -> e.getEventId().equals(eventId))) {
             result.put("success", false);
             result.put("message", "You are already registered for this event");
             return result;
         }
 
-        // full capacity adding int capacity field to Event still could be needed
-        // To add capacity column (currentCount >= capacity) → "Event is full"
-        // result.put("success", false); result.put("message", "Event is full"); return result;
-
-        // register
         user.getEvents().add(event);
         userRepository.save(user);
 
