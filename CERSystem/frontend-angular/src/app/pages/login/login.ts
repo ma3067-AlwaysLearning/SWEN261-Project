@@ -22,6 +22,10 @@ export class Login {
     private router: Router
   ) {}
 
+  ngOnInit() {
+    this.auth.logout().subscribe();
+  }
+
   clearApiError(): void {
     this.errorMessage = '';
   }
@@ -37,6 +41,7 @@ export class Login {
       });
       return;
     }
+
 
     this.isSubmitting = true;
 

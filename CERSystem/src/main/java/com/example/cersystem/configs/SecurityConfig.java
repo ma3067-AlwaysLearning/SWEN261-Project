@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout",  "/events/register/**" )
+                        .ignoringRequestMatchers("/events/api/create", "/api/auth/login", "/api/auth/logout", "/events/register/**" )
                 )
                 .authorizeHttpRequests((requests) -> requests
                         // allow preflight requests
@@ -36,7 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/events", "/events/api", "/css/**", "/js/**", "/images/**", "/style.css").permitAll()
 
                         // angular auth api
-                        .requestMatchers("/api/auth/csrf", "/api/auth/login", "/api/auth/logout").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
 
                         // helpful to avoid redirect weirdness on errors
                         .requestMatchers("/error").permitAll()
@@ -44,11 +44,14 @@ public class SecurityConfig {
                         // Any authenticated role can see the dashboard/profile
                         .requestMatchers("/dashboard").hasAnyRole("STUDENT", "ORGANIZER", "ADMIN")
 
+                        // Only students can open the API that shows their registered events
+                        .requestMatchers(HttpMethod.GET, "/events/my/api").hasRole("STUDENT")
+
+                        // Only students can register for events
+                        .requestMatchers(HttpMethod.POST, "/events/register/**").hasRole("STUDENT")
+
                         // Story-based examples for future endpoints
                         .requestMatchers(HttpMethod.GET, "/api/events/**", "/events/api").permitAll()
-
-                        .requestMatchers(HttpMethod.POST, "/api/events/register/**")
-                        .hasRole("STUDENT")
 
                         .requestMatchers(HttpMethod.POST, "/api/events/**")
                         .hasAnyRole("ORGANIZER", "ADMIN")
@@ -64,6 +67,9 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/admin/**")
                         .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/events/api/create")
+                        .hasAnyRole("ORGANIZER", "ADMIN")
 
                         .anyRequest().authenticated()
                 )

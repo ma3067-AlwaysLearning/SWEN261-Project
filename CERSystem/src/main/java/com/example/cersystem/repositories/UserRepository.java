@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
-    long countByEvents_EventId(Long eventId);
+    int countByEventsEventId(Long eventId);
 }

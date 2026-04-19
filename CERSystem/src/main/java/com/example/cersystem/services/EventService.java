@@ -1,5 +1,7 @@
 package com.example.cersystem.services;
 
+import com.example.cersystem.dto.EventRequest;
+import com.example.cersystem.dto.EventSummaryResponse;
 import com.example.cersystem.models.Event;
 import com.example.cersystem.models.User;
 import com.example.cersystem.repositories.EventRepository;
@@ -24,10 +26,21 @@ public class EventService {
         this.userRepository = userRepository;
     }
 
-    public Event save(Event event) { return eventRepository.save(event); }
-    public List<Event> searchByName(String name) { return eventRepository.findByTitleContainingIgnoreCase(name); }
-    public List<Event> searchByCategory(String category) { return eventRepository.findByCategoryIgnoreCase(category); }
-    public List<Event> getAll() { return eventRepository.findAll(); }
+    public Event save(Event event) {
+        return eventRepository.save(event);
+    }
+
+    public List<Event> searchByName(String name) {
+        return eventRepository.findByTitleContainingIgnoreCase(name);
+    }
+
+    public List<Event> searchByCategory(String category) {
+        return eventRepository.findByCategoryIgnoreCase(category);
+    }
+
+    public List<Event> getAll() {
+        return eventRepository.findAll();
+    }
 
     public List<Event> searchAndFilter(String keyword,
                                        String category,
@@ -82,7 +95,8 @@ public class EventService {
         return eventRepository.findAll(specification);
     }
 
-    public List<Event> getCollection(String email) {
+    // Returns all events that the logged in student has registered for
+    public List<Event> getRegisteredEvents(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
         return user.getEvents();
     }
@@ -101,6 +115,13 @@ public class EventService {
         if (event == null) {
             result.put("success", false);
             result.put("message", "Event does not exist");
+            return result;
+        }
+
+        long registeredCount = userRepository.countByEventsEventId(eventId);
+        if (registeredCount >= event.getCapacity()) {
+            result.put("success", false);
+            result.put("message", "This event is full");
             return result;
         }
 
@@ -124,5 +145,39 @@ public class EventService {
 
     private String wrapLike(String value) {
         return "%" + value.trim().toLowerCase() + "%";
+    }
+
+    public Event createEvent(EventRequest request, String organizerEmail) {
+        User organizer = userRepository.findByEmail(organizerEmail)
+                .orElseThrow(() -> new RuntimeException("Organizer not found"));
+
+        Event event = new Event(
+                organizer,
+                request.getEndTime(),
+                request.getStartTime(),
+                request.getRegistrationEnd(),
+                request.getRegistrationStart(),
+                request.getLocation(),
+                request.getCategory(),
+                request.getDescription(),
+                request.getScheduledDate(),
+                request.getTitle(),
+                request.getCapacity()
+        );
+
+        return eventRepository.save(event);
+    }
+
+    public List<EventSummaryResponse> getAllSummaries(String keyword, String category,
+                                                      String location, String organizer,
+                                                      LocalDate startDate, LocalDate endDate) {
+        return searchAndFilter(keyword, category, location, organizer, startDate, endDate)
+                .stream()
+                .map(event -> EventSummaryResponse.from(
+                        event,
+                        userRepository.countByEventsEventId(event.getEventId())  // ← counted here
+                ))
+
+                .toList();
     }
 }

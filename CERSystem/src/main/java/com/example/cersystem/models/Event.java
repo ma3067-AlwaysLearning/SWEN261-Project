@@ -42,11 +42,11 @@ public class Event {
     private LocalDateTime endTime;
 
     @Column(nullable = false)
-    private String status;
+    private int capacity;
 
     @Column(nullable = false)
-    private Integer capacity = 30;
-
+    private String status;
+  
     @ManyToOne
     @JoinColumn(name = "organizer_id", nullable = false)
     private User organizer;
@@ -58,12 +58,12 @@ public class Event {
         if (this.status == null || this.status.isBlank()) {
             this.status = "SCHEDULED";
         }
-        if (this.capacity == null || this.capacity < 1) {
+        if (this.capacity < 1) {
             this.capacity = 30;
         }
     }
 
-    public Event(User organizer, LocalDateTime endTime, LocalDateTime startTime, LocalDateTime registrationEnd, LocalDateTime registrationStart, String location, String category, String description, LocalDate scheduledDate, String title) {
+    public Event(User organizer, LocalDateTime endTime, LocalDateTime startTime, LocalDateTime registrationEnd, LocalDateTime registrationStart, String location, String category, String description, LocalDate scheduledDate, String title, int capacity) {
         this.organizer = organizer;
         this.endTime = endTime;
         this.startTime = startTime;
@@ -74,7 +74,7 @@ public class Event {
         this.description = description;
         this.scheduledDate = scheduledDate;
         this.title = title;
-        this.capacity = 30;
+        this.capacity=capacity;
     }
 
     public boolean hasStarted() {
@@ -180,20 +180,20 @@ public class Event {
         this.status = status;
     }
 
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
     public User getOrganizer() {
         return organizer;
     }
 
     public void setOrganizer(User organizer) {
         this.organizer = organizer;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }
 

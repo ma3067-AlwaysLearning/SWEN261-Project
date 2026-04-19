@@ -1,0 +1,29 @@
+<div class="dashboard-wrap">
+  <div class="dashboard-card">
+    <h2>My Events</h2>
+
+    <p *ngIf="loading">Loading your events...</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div *ngIf="!loading && events.length > 0">
+      <p><strong>Total registered events:</strong> {{ events.length }}</p>
+
+      <div class="role-box" *ngFor="let event of events">
+        <h3>{{ event.title }}</h3>
+        <p><strong>Date:</strong> {{ event.scheduledDate }}</p>
+        <p><strong>Time:</strong> {{ event.startTime }} - {{ event.endTime }}</p>
+        <p><strong>Location:</strong> {{ event.location }}</p>
+        <p><strong>Category:</strong> {{ event.category }}</p>
+        <p><strong>Organizer:</strong> {{ event.organizerName }}</p>
+        <p><strong>Status:</strong> {{ event.status }}</p>
+        <p>{{ event.description }}</p>
+      </div>
+    </div>
+
+    <div class="role-box" *ngIf="!loading && events.length === 0">
+      <p>You did not register for any events yet.</p>
+    </div>
+
+    <a routerLink="/dashboard">Back to Dashboard</a>
+  </div>
+</div>

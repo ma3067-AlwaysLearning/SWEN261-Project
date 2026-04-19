@@ -55,7 +55,8 @@ class EventControllerTest {
                 "Workshop",
                 "Hands-on introduction to Spring Boot and REST APIs.",
                 LocalDate.of(2026, 4, 1),
-                "Spring Boot Workshop"
+                "Spring Boot Workshop",
+                10
         );
         event.setEventId(1L);
         event.setStatus("SCHEDULED");
