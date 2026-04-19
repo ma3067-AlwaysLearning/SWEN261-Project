@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { Login } from './pages/login/login';
 import { Dashboard } from './pages/dashboard/dashboard';
+import {EventManagementComponent} from './pages/event-management/event-management.component';
+
 import {authGuard} from './core/auth.guard';
 import {roleGuard} from './core/role.guard';
 import {Unauthorized} from './pages/unauthorized/unauthorized';
@@ -37,6 +39,8 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
   },
+  { path: 'event-management', component: EventManagementComponent },
+
 
   { path: 'unauthorized', component: Unauthorized }
 ];

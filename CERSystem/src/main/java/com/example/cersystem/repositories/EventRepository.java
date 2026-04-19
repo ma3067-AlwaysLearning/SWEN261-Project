@@ -9,4 +9,6 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
     List<Event> findByTitleContainingIgnoreCase(String title);
     List<Event> findByCategoryIgnoreCase(String category);
+
+    List<Event> findByOrganizer_EmailIgnoreCase(String email);
 }

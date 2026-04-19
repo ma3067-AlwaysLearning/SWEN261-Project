@@ -9,12 +9,12 @@
         </p>
       </div>
 
-      <div class="header-actions">
-        <a routerLink="/events" class="btn btn-secondary">Browse Events</a>
-        <button class="btn btn-danger" type="button" (click)="onLogout()">Logout</button>
+      <div class="role-box" *ngIf="isOrganizerOrAdmin()">
+        <div class="header-actions">
+          <button class="btn btn-danger" type="button" (click)="onLogout()">Logout</button>
+        </div>
       </div>
     </section>
-
     <p class="helper-text" *ngIf="loading">Loading your dashboard...</p>
     <p class="alert error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
@@ -74,6 +74,7 @@
             <h3>Browse Events</h3>
             <p>Search events, check details, and register quickly.</p>
           </a>
+          <button *ngIf="isOrganizerOrAdmin()" routerLink="/event-management" class="action-tile">Manage My Events</button>
 
           <a *ngIf="isStudent()" routerLink="/student-events" class="action-tile">
             <span class="tile-kicker">Student</span>

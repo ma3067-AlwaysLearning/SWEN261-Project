@@ -1,0 +1,40 @@
+.event-management {
+  padding: 20px;
+}
+
+.edit-form {
+  background: #f9f9f9;
+  padding: 15px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.edit-form input, .edit-form textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+.events-list {
+  list-style: none;
+  padding: 0;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.actions button {
+  margin-left: 8px;
+  padding: 6px 12px;
+}
+
+.cancel-btn {
+  background-color: #dc3545;
+  color: white;
+}
